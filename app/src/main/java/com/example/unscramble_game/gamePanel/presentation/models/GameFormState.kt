@@ -1,4 +1,4 @@
-package com.example.unscramble_game.gamePanel.presentation.states
+package com.example.unscramble_game.gamePanel.presentation.models
 
 import androidx.annotation.StringRes
 import com.example.unscramble_game.gamePanel.domain.models.Guess

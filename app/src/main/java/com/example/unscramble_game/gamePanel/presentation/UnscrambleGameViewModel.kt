@@ -15,10 +15,10 @@ import com.example.unscramble_game.core.presentation.utils.updateStateFlow
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
 import com.example.unscramble_game.gamePanel.domain.models.GameTopic
 import com.example.unscramble_game.gamePanel.domain.models.Guess
-import com.example.unscramble_game.gamePanel.presentation.states.GameControlState
-import com.example.unscramble_game.gamePanel.presentation.states.GameFormState
-import com.example.unscramble_game.gamePanel.presentation.states.GameState
-import com.example.unscramble_game.gamePanel.presentation.states.GameTopicWords
+import com.example.unscramble_game.gamePanel.presentation.models.GameControlState
+import com.example.unscramble_game.gamePanel.presentation.models.GameFormState
+import com.example.unscramble_game.gamePanel.presentation.models.GameState
+import com.example.unscramble_game.gamePanel.presentation.models.GameTopicWords
 import com.example.unscramble_game.gamePanel.presentation.utils.GameTopicWordsBuilder.getWords
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

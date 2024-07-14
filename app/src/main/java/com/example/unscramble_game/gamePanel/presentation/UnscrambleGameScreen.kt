@@ -58,7 +58,7 @@ import com.example.unscramble_game.core.presentation.utils.textSpan
 import com.example.unscramble_game.gamePanel.domain.models.GameTopic
 import com.example.unscramble_game.gamePanel.presentation.composables.GameFinishedScoreDialog
 import com.example.unscramble_game.gamePanel.presentation.composables.GameTopicSelectionDialog
-import com.example.unscramble_game.gamePanel.presentation.states.GameState
+import com.example.unscramble_game.gamePanel.presentation.models.GameState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 

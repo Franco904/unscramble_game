@@ -1,4 +1,4 @@
-package com.example.unscramble_game.gamePanel.presentation.states
+package com.example.unscramble_game.gamePanel.presentation.models
 
 import android.os.Parcelable
 import com.example.unscramble_game.gamePanel.domain.models.GameTopic
