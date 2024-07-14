@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_owner_text">Franco\'s\n</string>
+    <string name="app_name">Unscramble Game</string>
+
+    <string name="unscramble_game_start_game_primary_btn">Start game</string>
+    <string name="unscramble_game_submit_primary_btn">Submit</string>
+
+    <string name="unscramble_game_skip_secondary_btn">Skip</string>
+    <string name="unscramble_game_quit_secondary_btn">Quit</string>
+    <string name="unscramble_game_no_secondary_btn">No secondary button</string>
+
+    <string name="unscramble_game_score">"Score: "</string>
+    <string name="unscramble_game_topic">"Topic: "</string>
+    <string name="unscramble_game_current_round">%1$s/10</string>
+
+    <string name="unscramble_guess_the_scrambled_word">Guess the scrambled word!</string>
+    <string name="unscramble_your_guess">Your guess</string>
+    <string name="unscramble_input_your_guess_before_submit">Input your guess before submit</string>
+
+    <string name="unscramble_your_final_score">Your final score:</string>
+    <string name="unscramble_game_congratulations">Congratulations!</string>
+    <string name="unscramble_game_game_over">Game over</string>
+    <string name="unscramble_game_dialog_button_restart">Restart</string>
+    <string name="unscramble_game_dialog_button_quit">Quit</string>
+
+    <string name="unscramble_game_select_game_topic">Select game topic</string>
+    <string name="unscramble_game_label_topic">Topic</string>
+    <string name="unscramble_game_topic_selection_explanation">You\'ll be challenged to unscramble ten words related to this topic.</string>
+    <string name="unscramble_game_dialog_button_cancel">Cancel</string>
+    <string name="unscramble_game_dialog_button_start">Start</string>
+</resources>
