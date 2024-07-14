@@ -14,7 +14,7 @@ import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.utils.updateStateFlow
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
 import com.example.unscramble_game.gamePanel.domain.models.GameTopic
-import com.example.unscramble_game.gamePanel.domain.models.Guess
+import com.example.unscramble_game.core.domain.models.Guess
 import com.example.unscramble_game.gamePanel.presentation.models.GameControlState
 import com.example.unscramble_game.gamePanel.presentation.models.GameFormState
 import com.example.unscramble_game.gamePanel.presentation.models.GameState
