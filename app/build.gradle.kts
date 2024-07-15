@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -79,8 +80,14 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // Kotlin
     implementation(libs.kotlin.collections.immutable)
+
+    // Serialization
+    implementation(libs.kotlin.serialization.json)
 
     // Helpers
     implementation(libs.faker)
