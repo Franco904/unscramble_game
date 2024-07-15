@@ -1,5 +1,6 @@
 package com.example.unscramble_game.gamePanel.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -48,7 +49,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
@@ -63,12 +63,15 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
-fun UnscrambleGameScreen(
+fun GamePanelScreen(
+    onNavigateToGameHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: UnscrambleGameViewModel = viewModel<UnscrambleGameViewModel>().apply { init() },
+    viewModel: GamePanelScreenViewModel = viewModel<GamePanelScreenViewModel>(),
 ) {
-    val gameControlState by viewModel.gameControlState.collectAsStateWithLifecycle()
+    val gameControlState = viewModel.gameControlState
     val gameFormState = viewModel.gameFormState
+
+    Log.w("UnscrambleGameScreen", "Guess: ${viewModel.gameFormState.guess.text}")
 
     val focusManager = LocalFocusManager.current
 
@@ -383,8 +386,8 @@ private fun GameSecondaryButton(
 
 @Preview
 @Composable
-fun UnscrambleGameUiPreview() {
+fun GamePanelScreenPreview() {
     UnscrambleGameTheme {
-        UnscrambleGameScreen()
+        GamePanelScreen()
     }
 }

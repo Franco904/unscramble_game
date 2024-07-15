@@ -3,6 +3,7 @@ package com.example.unscramble_game.gamePanel.presentation.utils
 import com.example.unscramble_game.core.miscellaneous.faker
 import com.example.unscramble_game.core.presentation.utils.toTitleCase
 import com.example.unscramble_game.gamePanel.domain.models.GameTopic
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,7 +11,7 @@ import kotlinx.coroutines.withContext
 typealias WordBuilder = () -> String
 
 object GameTopicWordsBuilder {
-    private val topicToWordBuilder = mapOf<GameTopic, WordBuilder>(
+    private val topicToWordBuilder = persistentMapOf<GameTopic, WordBuilder>(
         GameTopic.ADJECTIVES to faker.adjective::positive,
         GameTopic.ANIMAL_NAMES to faker.animal::name,
         GameTopic.BASKETBALL_TEAMS to faker.basketball::teams,
