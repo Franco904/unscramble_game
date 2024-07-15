@@ -1,11 +1,10 @@
 package com.example.unscramble_game.gamePanel.presentation
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
-import androidx.lifecycle.viewmodel.compose.saveable
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.Guess
 import com.example.unscramble_game.core.miscellaneous.faker
@@ -24,14 +23,11 @@ import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
-@OptIn(SavedStateHandleSaveableApi::class)
-class GamePanelScreenViewModel(
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
-    var gameControlState by savedStateHandle.saveable { mutableStateOf(GameControlState()) }
+class GamePanelScreenViewModel : ViewModel() {
+    var gameControlState by mutableStateOf(GameControlState())
         private set
 
-    var gameFormState by savedStateHandle.saveable { mutableStateOf(GameFormState()) }
+    var gameFormState by mutableStateOf(GameFormState())
         private set
 
     private lateinit var topicToWords: ImmutableMap<GameTopic, ImmutableList<String>>
