@@ -2,7 +2,6 @@ package com.example.unscramble_game.gamePanel.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -71,29 +71,29 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun GamePanelScreen(
-    onNavigateToGameHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: GamePanelScreenViewModel = viewModel<GamePanelScreenViewModel>(),
+    onNavigateToGameHistory: () -> Unit = {},
 ) {
     val gameControlState = viewModel.gameControlState
     val gameFormState = viewModel.gameFormState
 
-    val isGameToStartState =
+    val isGameNotStartedState =
         gameControlState.gameState in listOf(GameState.NOT_STARTED, GameState.TOPIC_SELECTION)
 
     val focusManager = LocalFocusManager.current
 
     Scaffold(
         topBar = {
-            if (isGameToStartState) GamePanelTopBar(onNavigateToGameHistory)
+            if (isGameNotStartedState) GamePanelTopBar(onNavigateToGameHistory)
         },
-        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = modifier
     ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = { focusManager.clearFocus() })
                 }
@@ -180,7 +180,10 @@ private fun GamePanelTopBar(
         title = { Text("") },
         actions = {
             GamePanelActionToGameHistory(onNavigateToGameHistory)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        )
     )
 }
 
@@ -246,7 +249,7 @@ private fun GameMainPanel(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(

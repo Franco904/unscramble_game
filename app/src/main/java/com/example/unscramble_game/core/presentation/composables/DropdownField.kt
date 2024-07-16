@@ -2,12 +2,17 @@ package com.example.unscramble_game.core.presentation.composables
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +30,7 @@ fun DropdownField(
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(false) }
     var selectedItem by rememberSaveable { mutableStateOf("") }
 
     Box(
@@ -33,9 +38,9 @@ fun DropdownField(
             .fillMaxWidth()
     ) {
         ExposedDropdownMenuBox(
-            expanded = expanded,
+            expanded = isExpanded,
             onExpandedChange = {
-                expanded = !expanded
+                isExpanded = !isExpanded
             }
         ) {
             TextField(
@@ -44,16 +49,23 @@ fun DropdownField(
                 onValueChange = {},
                 placeholder = { Text(placeholderText) },
                 trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(
-                        expanded = expanded,
+                    val icon = if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+                    Icon(
+                        icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
                 modifier = Modifier
                     .menuAnchor()
             )
             ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+                expanded = isExpanded,
+                onDismissRequest = { isExpanded = false },
             ) {
                 items.forEach { item ->
                     DropdownMenuItem(
@@ -62,7 +74,7 @@ fun DropdownField(
                             onItemSelected(item)
 
                             selectedItem = item
-                            expanded = false
+                            isExpanded = false
                         }
                     )
                 }
