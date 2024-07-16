@@ -11,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.gamePanel.presentation.GamePanelScreen
-import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +40,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-sealed interface Routes {
-    @Serializable
-    object GamePanel
-
-    @Serializable
-    object GameHistory
 }
