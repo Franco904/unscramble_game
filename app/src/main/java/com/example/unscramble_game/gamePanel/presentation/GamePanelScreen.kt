@@ -1,6 +1,5 @@
 package com.example.unscramble_game.gamePanel.presentation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -18,16 +17,23 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.Badge
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -71,81 +78,122 @@ fun GamePanelScreen(
     val gameControlState = viewModel.gameControlState
     val gameFormState = viewModel.gameFormState
 
-    Log.w("UnscrambleGameScreen", "Guess: ${viewModel.gameFormState.guess.text}")
+    val isGameToStartState =
+        gameControlState.gameState in listOf(GameState.NOT_STARTED, GameState.TOPIC_SELECTION)
 
     val focusManager = LocalFocusManager.current
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            }
-            .padding(horizontal = 24.dp, vertical = 32.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        val isStartedOrFinishedState =
-            gameControlState.gameState in persistentListOf(GameState.STARTED, GameState.FINISHED)
+    Scaffold(
+        topBar = {
+            if (isGameToStartState) GamePanelTopBar(onNavigateToGameHistory)
+        },
+        modifier = modifier,
+    ) { innerPadding ->
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { focusManager.clearFocus() })
+                }
+                .padding(
+                    horizontal = 24.dp + innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
+                    vertical = 32.dp + innerPadding.calculateTopPadding(),
+                )
+                .verticalScroll(rememberScrollState())
+        ) {
+            val isStartedOrFinishedState =
+                gameControlState.gameState in persistentListOf(
+                    GameState.STARTED,
+                    GameState.FINISHED
+                )
 
-        if (isStartedOrFinishedState) {
-            Row {
-                GameTotalScoreSection(totalScore = gameControlState.totalScore.toString())
-                Spacer(modifier = Modifier.weight(1f))
-                GameTopicSection(
-                    topic = gameControlState.topicWords?.topic?.description!!,
+            if (isStartedOrFinishedState) {
+                Row {
+                    GameTotalScoreSection(totalScore = gameControlState.totalScore.toString())
+                    Spacer(modifier = Modifier.weight(1f))
+                    GameTopicSection(
+                        topic = gameControlState.topicWords?.topic?.description!!,
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            GameMainPanel {
+                val isNotStartedOrTopicSelectionState =
+                    gameControlState.gameState in persistentListOf(
+                        GameState.NOT_STARTED,
+                        GameState.TOPIC_SELECTION
+                    )
+
+                if (isNotStartedOrTopicSelectionState) GameNotStartedPanel()
+                else GameStartedPanel(
+                    round = gameControlState.round.toString(),
+                    scrambledRoundWord = gameControlState.scrambledRoundWord,
+                    guess = gameFormState.guess.text,
+                    guessError = gameFormState.guessError,
+                    onGuessChanged = viewModel::onGuessTextChanged,
+                    onGuessInputDone = { focusManager.clearFocus() },
+                    onFocusChanged = viewModel::onGuessFieldFocusChanged,
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        GameMainPanel {
-            val isNotStartedOrTopicSelectionState = gameControlState.gameState in persistentListOf(
-                GameState.NOT_STARTED,
-                GameState.TOPIC_SELECTION
-            )
-
-            if (isNotStartedOrTopicSelectionState) GameNotStartedPanel()
-            else GameStartedPanel(
-                round = gameControlState.round.toString(),
-                scrambledRoundWord = gameControlState.scrambledRoundWord,
-                guess = gameFormState.guess.text,
-                guessError = gameFormState.guessError,
-                onGuessChanged = viewModel::onGuessTextChanged,
-                onGuessInputDone = { focusManager.clearFocus() },
-                onFocusChanged = viewModel::onGuessFieldFocusChanged,
-            )
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        GamePrimaryButton(
-            buttonText = stringResource(
-                id = gameControlState.primaryButtonText
-                    ?: R.string.unscramble_game_start_game_primary_btn
-            ),
-            onClick = viewModel::onPrimaryButtonClicked,
-        )
-        AnimatedVisibility(isStartedOrFinishedState) {
-            GameSecondaryButton(
+            Spacer(modifier = Modifier.height(32.dp))
+            GamePrimaryButton(
                 buttonText = stringResource(
-                    id = gameControlState.secondaryButtonText
-                        ?: R.string.unscramble_game_no_secondary_btn
+                    id = gameControlState.primaryButtonText
+                        ?: R.string.unscramble_game_start_game_primary_btn
                 ),
-                onClick = viewModel::onSecondaryButtonClicked,
+                onClick = viewModel::onPrimaryButtonClicked,
             )
+            AnimatedVisibility(isStartedOrFinishedState) {
+                GameSecondaryButton(
+                    buttonText = stringResource(
+                        id = gameControlState.secondaryButtonText
+                            ?: R.string.unscramble_game_no_secondary_btn
+                    ),
+                    onClick = viewModel::onSecondaryButtonClicked,
+                )
+            }
+            if (gameControlState.gameState == GameState.TOPIC_SELECTION) {
+                GameTopicSelectionDialog(
+                    topics = GameTopic.entries.map { it.description }.toPersistentList(),
+                    onCancel = viewModel::onCancelTopicSelection,
+                    onStart = viewModel::onTopicSelected,
+                )
+            } else if (gameControlState.gameState == GameState.FINISHED) {
+                GameFinishedScoreDialog(
+                    totalScore = gameControlState.totalScore,
+                    onRestartGame = viewModel::restartGame,
+                    onQuitGame = viewModel::quitGame,
+                )
+            }
         }
-        if (gameControlState.gameState == GameState.TOPIC_SELECTION) {
-            GameTopicSelectionDialog(
-                topics = GameTopic.entries.map { it.description }.toPersistentList(),
-                onCancel = viewModel::onCancelTopicSelection,
-                onStart = viewModel::onTopicSelected,
-            )
-        } else if (gameControlState.gameState == GameState.FINISHED) {
-            GameFinishedScoreDialog(
-                totalScore = gameControlState.totalScore,
-                onRestartGame = viewModel::restartGame,
-                onQuitGame = viewModel::quitGame,
-            )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GamePanelTopBar(
+    onNavigateToGameHistory: () -> Unit,
+) {
+    TopAppBar(
+        title = { Text("") },
+        actions = {
+            GamePanelActionToGameHistory(onNavigateToGameHistory)
         }
+    )
+}
+
+@Composable
+private fun GamePanelActionToGameHistory(
+    onNavigateToGameHistory: () -> Unit,
+) {
+    IconButton(onClick = onNavigateToGameHistory) {
+        Icon(
+            Icons.Outlined.History,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+        )
     }
 }
 
