@@ -58,11 +58,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
+import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
 import com.example.unscramble_game.core.presentation.utils.style
 import com.example.unscramble_game.core.presentation.utils.textSpan
-import com.example.unscramble_game.gamePanel.domain.models.GameTopic
 import com.example.unscramble_game.gamePanel.presentation.composables.GameFinishedScoreDialog
 import com.example.unscramble_game.gamePanel.presentation.composables.GameTopicSelectionDialog
 import com.example.unscramble_game.gamePanel.presentation.models.GameState
@@ -114,7 +114,7 @@ fun GamePanelScreen(
                     GameTotalScoreSection(totalScore = gameControlState.totalScore.toString())
                     Spacer(modifier = Modifier.weight(1f))
                     GameTopicSection(
-                        topic = gameControlState.topicWords?.topic?.description!!,
+                        topic = gameControlState.topic?.description!!,
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))

@@ -1,4 +1,4 @@
-package com.example.unscramble_game.gamePanel.domain.models
+package com.example.unscramble_game.core.domain.models
 
 enum class GameTopic(val description: String) {
     ADJECTIVES("Adjectives"),

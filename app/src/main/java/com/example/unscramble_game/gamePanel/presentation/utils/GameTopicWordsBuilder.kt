@@ -1,8 +1,8 @@
 package com.example.unscramble_game.gamePanel.presentation.utils
 
+import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.miscellaneous.faker
 import com.example.unscramble_game.core.presentation.utils.toTitleCase
-import com.example.unscramble_game.gamePanel.domain.models.GameTopic
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers

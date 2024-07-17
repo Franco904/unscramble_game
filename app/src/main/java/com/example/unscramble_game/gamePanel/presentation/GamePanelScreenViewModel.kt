@@ -6,33 +6,43 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unscramble_game.R
-import com.example.unscramble_game.core.domain.models.Guess
-import com.example.unscramble_game.core.miscellaneous.faker
+import com.example.unscramble_game.core.domain.models.GameTopic
+import com.example.unscramble_game.core.domain.models.RoundGuess
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
-import com.example.unscramble_game.gamePanel.domain.models.GameTopic
 import com.example.unscramble_game.gamePanel.presentation.models.GameControlState
 import com.example.unscramble_game.gamePanel.presentation.models.GameFormState
 import com.example.unscramble_game.gamePanel.presentation.models.GameState
-import com.example.unscramble_game.gamePanel.presentation.models.GameTopicWords
 import com.example.unscramble_game.gamePanel.presentation.utils.GameTopicWordsBuilder.getWords
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
+// TODO: Adicionar SavedStateHandle e converter Compose state em StateFlow
 class GamePanelScreenViewModel : ViewModel() {
+    private val gameWords = mutableListOf<String>()
+    private val gameScrambledWords = mutableListOf<String>()
+    private val guesses = mutableListOf<String?>()
+    private val scores = mutableListOf<Boolean>()
+    private val skips = mutableListOf<Boolean>()
+
+    private val remainingWords = mutableListOf<String>()
+
     var gameControlState by mutableStateOf(GameControlState())
         private set
 
     var gameFormState by mutableStateOf(GameFormState())
         private set
 
+    /**
+    Must not be changed anywhere other than in the view model class initialization
+     */
     private lateinit var topicToWords: ImmutableMap<GameTopic, ImmutableList<String>>
 
     init {
+        // TODO: Carregar lista aleatoriamente partindo de uma lista maior
+        //  (ao invés de ir aleatoriamente selecionando a cada round)
         viewModelScope.launch {
             topicToWords = persistentMapOf(
                 GameTopic.ADJECTIVES to GameTopic.ADJECTIVES.getWords(),
@@ -47,7 +57,7 @@ class GamePanelScreenViewModel : ViewModel() {
     }
 
     fun onGuessTextChanged(newGuessText: String) {
-        gameFormState = gameFormState.copy(guess = Guess(text = newGuessText))
+        gameFormState = gameFormState.copy(guess = RoundGuess(text = newGuessText))
     }
 
     fun onGuessFieldFocusChanged(isFocused: Boolean) {
@@ -77,7 +87,7 @@ class GamePanelScreenViewModel : ViewModel() {
     private fun initTopicSelection() {
         gameControlState = gameControlState.copy(
             gameState = GameState.TOPIC_SELECTION,
-            topicWords = null,
+            topic = null,
         )
     }
 
@@ -94,60 +104,84 @@ class GamePanelScreenViewModel : ViewModel() {
             return
         }
 
-        startGame(GameTopicWords(topicWords.key, topicWords.value))
+        clearGameHistoryData()
+        remainingWords.addAll(topicWords.value)
+
+        startGame(
+            topic = topicWords.key,
+            firstRoundWord = remainingWords.first(),
+        )
     }
 
-    private fun startGame(topicWords: GameTopicWords) {
-        val roundWord = faker.random.randomValue(topicWords.words)
+    private fun clearGameHistoryData() {
+        gameWords.clear()
+        gameScrambledWords.clear()
+        guesses.clear()
+        scores.clear()
+        skips.clear()
+        remainingWords.clear()
+    }
+
+    private fun startGame(
+        topic: GameTopic,
+        firstRoundWord: String,
+    ) {
+        val scrambledFirstRoundWord = firstRoundWord.scramble()
 
         gameControlState = GameControlState(
             gameState = GameState.STARTED,
-            topicWords = topicWords,
+            topic = topic,
             totalScore = 0,
             round = 1,
-            roundWord = roundWord,
-            scrambledRoundWord = roundWord.scramble(),
-            hasScoredInRound = false,
-            hasSkippedRound = false,
+            scrambledRoundWord = scrambledFirstRoundWord,
             primaryButtonText = R.string.unscramble_game_submit_primary_btn,
             secondaryButtonText = R.string.unscramble_game_skip_secondary_btn,
         )
 
         resetGuessState()
+
+        gameWords.add(firstRoundWord)
+        gameScrambledWords.add(scrambledFirstRoundWord)
     }
 
     private fun submitGuess() {
+        validateRoundGuess(onValidationFailed = { return })
+
+        val currentRoundWord = gameWords.last()
+        val hasScoredInRound = gameFormState.guess.text.lowercase() == currentRoundWord.lowercase()
+        val currentTotalScore = gameControlState.totalScore
+
+        if (gameControlState.round != LAST_ROUND) {
+            remainingWords.remove(remainingWords.first())
+            val newRoundWord = remainingWords.first()
+            val newScrambledRoundWord = newRoundWord.scramble()
+
+            gameControlState = gameControlState.copy(
+                totalScore = if (hasScoredInRound) currentTotalScore + 10 else currentTotalScore,
+                round = gameControlState.round + 1,
+                scrambledRoundWord = newScrambledRoundWord,
+            )
+
+            gameWords.add(newRoundWord)
+            gameScrambledWords.add(newScrambledRoundWord)
+        } else {
+            gameControlState = gameControlState.copy(gameState = GameState.FINISHED)
+        }
+
+        guesses.add(gameFormState.guess.text)
+        resetGuessState()
+
+        scores.add(hasScoredInRound)
+        skips.add(false)
+    }
+
+    private inline fun validateRoundGuess(onValidationFailed: () -> Unit) {
         val guessValidationResult = gameFormState.guess.validate()
         gameFormState = gameFormState.copy(
             guessError = guessValidationResult.error?.toPresentationMessage(),
         )
 
-        if (!guessValidationResult.isSuccessful) return
-
-        val guessText = gameFormState.guess.text
-        val hasScoredInRound =
-            guessText.lowercase() == gameControlState.roundWord?.lowercase()
-        val currentTotalScore = gameControlState.totalScore
-
-        val (newRoundWord, newWords) = pickRandomWordForNextRound()
-
-        gameControlState = if (gameControlState.round != LAST_ROUND_NUMBER) {
-            gameControlState.copy(
-                topicWords = gameControlState.topicWords?.copyWith(words = newWords),
-                totalScore = if (hasScoredInRound) currentTotalScore + 10 else currentTotalScore,
-                round = gameControlState.round + 1,
-                roundWord = newRoundWord,
-                scrambledRoundWord = newRoundWord.scramble(),
-                hasSkippedRound = false,
-            )
-        } else {
-            gameControlState.copy(
-                gameState = GameState.FINISHED,
-                hasSkippedRound = false,
-            )
-        }
-
-        resetGuessState()
+        if (!guessValidationResult.isSuccessful) onValidationFailed()
     }
 
     fun restartGame() = initTopicSelection()
@@ -159,26 +193,27 @@ class GamePanelScreenViewModel : ViewModel() {
     }
 
     private fun skipWord() {
-        val (newRoundWord, newWords) = pickRandomWordForNextRound()
+        if (gameControlState.round != LAST_ROUND) {
+            remainingWords.remove(remainingWords.first())
+            val newRoundWord = remainingWords.first()
+            val newScrambledRoundWord = newRoundWord.scramble()
 
-        gameControlState = if (gameControlState.round != LAST_ROUND_NUMBER) {
-            gameControlState.copy(
-                topicWords = gameControlState.topicWords?.copyWith(words = newWords),
+            gameControlState = gameControlState.copy(
                 round = gameControlState.round + 1,
-                roundWord = newRoundWord,
-                scrambledRoundWord = newRoundWord.scramble(),
-                hasScoredInRound = false,
-                hasSkippedRound = true,
+                scrambledRoundWord = newScrambledRoundWord,
             )
+
+            gameWords.add(newRoundWord)
+            gameScrambledWords.add(newScrambledRoundWord)
         } else {
-            gameControlState.copy(
-                gameState = GameState.FINISHED,
-                hasScoredInRound = false,
-                hasSkippedRound = true,
-            )
+            gameControlState = gameControlState.copy(gameState = GameState.FINISHED)
         }
 
+        guesses.add(null)
         resetGuessState()
+
+        scores.add(false)
+        skips.add(true)
     }
 
     fun quitGame() {
@@ -189,19 +224,9 @@ class GamePanelScreenViewModel : ViewModel() {
         )
     }
 
-    private fun pickRandomWordForNextRound(): Pair<String, ImmutableList<String>> {
-        val currentWords = gameControlState.topicWords?.words ?: persistentListOf()
-        val currentRoundWord = gameControlState.roundWord
-
-        val newRoundWord = faker.random.randomValue(currentWords)
-        val newWords = currentWords.filter { word -> word != currentRoundWord }.toPersistentList()
-
-        return Pair(newRoundWord, newWords)
-    }
-
     private fun resetGuessState() {
         gameFormState = gameFormState.copy(
-            guess = Guess(text = ""),
+            guess = RoundGuess(text = ""),
             guessError = null,
         )
     }
@@ -209,6 +234,6 @@ class GamePanelScreenViewModel : ViewModel() {
     companion object {
         private const val GAME_CONTROL_STATE_KEY = "gameControlState"
         private const val GAME_FORM_STATE_KEY = "gameFormState"
-        private const val LAST_ROUND_NUMBER = 10
+        private const val LAST_ROUND = 10
     }
 }
