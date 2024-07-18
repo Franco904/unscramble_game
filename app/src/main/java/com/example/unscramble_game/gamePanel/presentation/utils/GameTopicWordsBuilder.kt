@@ -3,15 +3,11 @@ package com.example.unscramble_game.gamePanel.presentation.utils
 import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.miscellaneous.faker
 import com.example.unscramble_game.core.presentation.utils.toTitleCase
-import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 typealias WordBuilder = () -> String
 
 object GameTopicWordsBuilder {
-    private val topicToWordBuilder = persistentMapOf<GameTopic, WordBuilder>(
+    private val topicToWordBuilder = mapOf<GameTopic, WordBuilder>(
         GameTopic.ADJECTIVES to faker.adjective::positive,
         GameTopic.ANIMAL_NAMES to faker.animal::name,
         GameTopic.BASKETBALL_TEAMS to faker.basketball::teams,
@@ -21,11 +17,11 @@ object GameTopicWordsBuilder {
         GameTopic.MINECRAFT_MOBS to faker.minecraft::mobs,
     )
 
-    suspend fun GameTopic.getWords() = withContext(Dispatchers.Default) {
+    fun GameTopic.getWords(): List<String> {
         val wordBuilder = topicToWordBuilder[this@getWords]
             ?: throw Exception("No word builder for game topic $this.")
 
-        List(10) { wordBuilder() }
+        return List(10) { wordBuilder() }
             .toSet()
             .toMutableList()
             .apply {
@@ -34,6 +30,6 @@ object GameTopicWordsBuilder {
                 }
             }
             .map { it.toTitleCase() }
-            .toPersistentList()
+            .toList()
     }
 }

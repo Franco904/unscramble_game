@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
@@ -75,8 +76,8 @@ fun GamePanelScreen(
     viewModel: GamePanelScreenViewModel = viewModel<GamePanelScreenViewModel>(),
     onNavigateToGameHistory: () -> Unit = {},
 ) {
-    val gameControlState = viewModel.gameControlState
-    val gameFormState = viewModel.gameFormState
+    val gameControlState by viewModel.gameControlState.collectAsStateWithLifecycle()
+    val gameFormState by viewModel.gameFormState.collectAsStateWithLifecycle()
 
     val isGameNotStartedState =
         gameControlState.gameState in listOf(GameState.NOT_STARTED, GameState.TOPIC_SELECTION)
