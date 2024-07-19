@@ -9,20 +9,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 data class SpanTypography(
-    val headlineSmall: SpanStyle = SpanStyle(
-        fontWeight = FontWeight.W600,
-        fontSize = 24.sp,
-    ),
     val headlineMedium: SpanStyle = SpanStyle(
         fontWeight = FontWeight.W600,
         fontSize = 28.sp,
     ),
-    val labelSmall: SpanStyle = SpanStyle(
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
+    val headlineSmall: SpanStyle = SpanStyle(
+        fontWeight = FontWeight.W600,
+        fontSize = 24.sp,
+    ),
+    val titleLarge: SpanStyle = SpanStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
     ),
     val bodyLarge: SpanStyle = SpanStyle(
         fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+    ),
+    val bodyMedium: SpanStyle = SpanStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+    ),
+    val labelSmall: SpanStyle = SpanStyle(
+        fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
     ),
 )
