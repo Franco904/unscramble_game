@@ -7,5 +7,5 @@ sealed interface Routes {
     object GamePanel
 
     @Serializable
-    object GameHistory
+    object PreviousGames
 }
