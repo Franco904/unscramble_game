@@ -12,12 +12,10 @@ data class SpanTypography(
     val headlineSmall: SpanStyle = SpanStyle(
         fontWeight = FontWeight.W600,
         fontSize = 24.sp,
-        letterSpacing = 0.5.sp,
     ),
     val headlineMedium: SpanStyle = SpanStyle(
         fontWeight = FontWeight.W600,
         fontSize = 28.sp,
-        letterSpacing = 0.5.sp,
     ),
     val labelSmall: SpanStyle = SpanStyle(
         fontWeight = FontWeight.Bold,

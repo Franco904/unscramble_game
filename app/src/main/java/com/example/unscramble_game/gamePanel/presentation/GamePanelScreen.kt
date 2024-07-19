@@ -19,10 +19,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.Badge
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -138,7 +138,7 @@ fun GamePanelScreen(
                     onFocusChanged = viewModel::onGuessFieldFocusChanged,
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             GamePrimaryButton(
                 buttonText = stringResource(
                     id = gameControlState.primaryButtonText
@@ -253,9 +253,6 @@ private fun GameMainPanel(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-        ),
         modifier = modifier
             .fillMaxWidth()
     ) {
@@ -281,7 +278,7 @@ private fun GameNotStartedPanel(
                 )
                 textSpan(
                     stringResource(R.string.app_name),
-                    style = MaterialTheme.spanTypography.headlineMedium
+                    style = MaterialTheme.spanTypography.headlineMedium,
                 )
             },
         )
@@ -406,7 +403,7 @@ private fun GamePrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedButton(
+    Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
