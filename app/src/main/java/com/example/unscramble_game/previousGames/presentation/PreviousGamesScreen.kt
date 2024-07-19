@@ -44,12 +44,14 @@ fun PreviousGamesScreen(
             PreviousGamesTopBar(onBackNavigation)
         },
         containerColor = MaterialTheme.colorScheme.background,
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        modifier = modifier
     ) { innerPadding ->
         val previousGamesGrouped = getPreviousGames()
 
         Column(
             modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(
                     start = 16.dp,
                     top = 12.dp + innerPadding.calculateTopPadding(),
@@ -121,6 +123,7 @@ fun PreviousGamesScreen(
 @Composable
 fun PreviousGamesTopBar(
     onBackNavigation: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         title = {
@@ -144,6 +147,7 @@ fun PreviousGamesTopBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
         ),
+        modifier = modifier,
     )
 }
 
