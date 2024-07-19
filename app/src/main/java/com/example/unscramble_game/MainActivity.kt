@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
-import com.example.unscramble_game.gameHistory.presentation.GameHistoryScreen
+import com.example.unscramble_game.previousGames.presentation.GameHistoryScreen
 import com.example.unscramble_game.gamePanel.presentation.GamePanelScreen
 
 class MainActivity : ComponentActivity() {
