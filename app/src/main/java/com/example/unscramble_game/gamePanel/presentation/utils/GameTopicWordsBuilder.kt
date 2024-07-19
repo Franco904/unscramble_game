@@ -1,7 +1,7 @@
 package com.example.unscramble_game.gamePanel.presentation.utils
 
 import com.example.unscramble_game.core.domain.models.GameTopic
-import com.example.unscramble_game.core.miscellaneous.faker
+import com.example.unscramble_game.core.presentation.utils.faker
 import com.example.unscramble_game.core.presentation.utils.toTitleCase
 
 typealias WordBuilder = () -> String
