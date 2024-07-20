@@ -3,9 +3,6 @@ package com.example.unscramble_game
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -24,8 +21,6 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController,
                     startDestination = Routes.GamePanel,
-                    enterTransition = { fadeIn(animationSpec = tween(150)) },
-                    exitTransition = { fadeOut(animationSpec = tween(150)) },
                 ) {
                     composable<Routes.GamePanel> {
                         GamePanelScreen(

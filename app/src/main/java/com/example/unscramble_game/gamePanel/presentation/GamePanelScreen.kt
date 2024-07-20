@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -62,6 +63,7 @@ import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
+import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
 import com.example.unscramble_game.core.presentation.utils.style
 import com.example.unscramble_game.core.presentation.utils.textSpan
 import com.example.unscramble_game.gamePanel.presentation.composables.GameFinishedScoreDialog
@@ -162,8 +164,18 @@ fun GamePanelScreen(
                     onStart = viewModel::onTopicSelected,
                 )
             } else if (gameControlState.gameState == GameState.FINISHED) {
+                val context = LocalContext.current
+
                 GameFinishedScoreDialog(
                     totalScore = gameControlState.totalScore,
+                    onShareGame = {
+                        context.showTextShareSheet(
+                            text = context.getString(
+                                R.string.unscramble_game_sharesheet_share_your_game_with_text,
+                                gameControlState.totalScore.toString(),
+                            ),
+                        )
+                    },
                     onRestartGame = viewModel::restartGame,
                     onQuitGame = viewModel::quitGame,
                 )

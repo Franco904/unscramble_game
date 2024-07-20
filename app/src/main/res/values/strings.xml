@@ -20,8 +20,10 @@
     <string name="unscramble_your_final_score">Your final score:</string>
     <string name="unscramble_game_congratulations">Congratulations!</string>
     <string name="unscramble_game_game_over">Game over</string>
+    <string name="unscramble_game_dialog_button_share_your_game">Share your score</string>
     <string name="unscramble_game_dialog_button_restart">Restart</string>
     <string name="unscramble_game_dialog_button_quit">Quit</string>
+    <string name="unscramble_game_sharesheet_share_your_game_with_text">I\'ve scored %1$s points in Unscramble Game!!</string>
 
     <string name="unscramble_game_select_game_topic">Select game topic</string>
     <string name="unscramble_game_label_topic">Topic</string>
