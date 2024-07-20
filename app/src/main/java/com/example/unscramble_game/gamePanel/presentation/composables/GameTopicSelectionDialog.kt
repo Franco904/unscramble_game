@@ -1,5 +1,6 @@
 package com.example.unscramble_game.gamePanel.presentation.composables
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,8 @@ fun GameTopicSelectionDialog(
     onCancel: () -> Unit = {},
 ) {
     var selectedTopic by rememberSaveable { mutableStateOf<String?>(null) }
+
+    BackHandler { onCancel() }
 
     AlertDialog(
         title = {
