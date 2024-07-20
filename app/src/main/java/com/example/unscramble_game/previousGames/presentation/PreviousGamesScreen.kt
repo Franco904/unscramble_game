@@ -174,7 +174,7 @@ private fun getPreviousGames() = persistentMapOf(
             totalScoreText = "20",
         ),
     ),
-    "July 15th" to persistentListOf(
+    "July 15" to persistentListOf(
         PreviousGameState(
             topicText = GameTopic.HARRY_POTTER_SPELLS.description,
             durationAndScoredRoundsText = "46s • Scored 9/10",
