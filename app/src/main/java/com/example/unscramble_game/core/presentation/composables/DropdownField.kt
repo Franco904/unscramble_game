@@ -20,7 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,5 +83,17 @@ fun DropdownField(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun DropdownFieldPreview() {
+    UnscrambleGameTheme {
+        DropdownField(
+            placeholderText = "Placeholder",
+            items = persistentListOf(),
+            onItemSelected = {},
+        )
     }
 }

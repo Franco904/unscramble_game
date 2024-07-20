@@ -18,17 +18,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.presentation.composables.DropdownField
+import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun GameTopicSelectionDialog(
     topics: ImmutableList<String>,
-    onStart: (String?) -> Unit,
-    onCancel: () -> Unit,
     modifier: Modifier = Modifier,
+    onStart: (String?) -> Unit = {},
+    onCancel: () -> Unit = {},
 ) {
     var selectedTopic by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -41,7 +44,7 @@ fun GameTopicSelectionDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(8.dp)
             ) {
                 DropdownField(
                     placeholderText = stringResource(R.string.unscramble_game_label_topic),
@@ -78,4 +81,12 @@ fun GameTopicSelectionDialog(
         shape = MaterialTheme.shapes.small,
         modifier = modifier.width(450.dp)
     )
+}
+
+@Preview
+@Composable
+fun GameTopicSelectionDialogPreview() {
+    UnscrambleGameTheme {
+        GameTopicSelectionDialog(topics = persistentListOf())
+    }
 }

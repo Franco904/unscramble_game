@@ -16,13 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.unscramble_game.R
+import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 
 @Composable
 fun GameFinishedScoreDialog(
     totalScore: Int,
-    onRestartGame: () -> Unit,
-    onQuitGame: () -> Unit,
     modifier: Modifier = Modifier,
+    onRestartGame: () -> Unit = {},
+    onQuitGame: () -> Unit = {},
 ) {
     AlertDialog(
         title = {
@@ -36,7 +37,7 @@ fun GameFinishedScoreDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(8.dp)
             ) {
                 Text(
                     text = stringResource(R.string.unscramble_your_final_score),
