@@ -1,7 +1,7 @@
 package com.example.unscramble_game.previousGames.presentation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,37 +74,40 @@ fun PreviousGamesScreen(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
                         shape = MaterialTheme.shapes.small,
+                        onClick = {},
                     ) {
-                        Column(
-                            modifier = modifier
+                        Box(
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
                                     start = 18.dp,
                                     top = 16.dp,
                                     end = 12.dp,
-                                    bottom = 16.dp,
                                 )
                         ) {
-                            Text(
-                                text = game.topicText!!,
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
+                            Column(
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
                             ) {
+                                Text(
+                                    text = game.topicText!!,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
                                     text = game.durationAndScoredRoundsText!!,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                                    modifier = Modifier.weight(1f),
-                                )
-                                Text(
-                                    text = game.totalScoreText!!,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                                 )
                             }
+                            Text(
+                                text = game.totalScoreText!!,
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                                modifier = Modifier
+                                    .padding(bottom = 8.dp)
+                                    .align(Alignment.BottomEnd)
+                            )
                         }
                     }
                     if (game != games.last()) {
