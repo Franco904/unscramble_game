@@ -41,7 +41,7 @@ fun PreviousGamesScreen(
 ) {
     Scaffold(
         topBar = {
-            PreviousGamesTopBar(onBackNavigation)
+            PreviousGamesTopBar { onBackNavigation() }
         },
         containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier
@@ -125,8 +125,8 @@ fun PreviousGamesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviousGamesTopBar(
-    onBackNavigation: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onBackNavigation: () -> Unit = {},
 ) {
     TopAppBar(
         title = {
