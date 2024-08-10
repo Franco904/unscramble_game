@@ -2,7 +2,6 @@ package com.example.unscramble_game.gamePanel.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -63,6 +61,7 @@ import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
+import com.example.unscramble_game.core.presentation.utils.onClick
 import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
 import com.example.unscramble_game.core.presentation.utils.style
 import com.example.unscramble_game.core.presentation.utils.textSpan
@@ -82,7 +81,7 @@ fun GamePanelScreen(
     val gameFormState by viewModel.gameFormState.collectAsStateWithLifecycle()
 
     val isGameNotStartedState =
-        gameControlState.gameState in listOf(GameState.NOT_STARTED, GameState.TOPIC_SELECTION)
+        gameControlState.gameState in listOf(GameState.NotStarted, GameState.TopicSelection)
 
     val focusManager = LocalFocusManager.current
 
@@ -97,9 +96,7 @@ fun GamePanelScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = { focusManager.clearFocus() })
-                }
+                .onClick { focusManager.clearFocus() }
                 .padding(
                     horizontal = 24.dp + innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
                     vertical = 32.dp + innerPadding.calculateTopPadding(),
@@ -108,8 +105,8 @@ fun GamePanelScreen(
         ) {
             val isStartedOrFinishedState =
                 gameControlState.gameState in persistentListOf(
-                    GameState.STARTED,
-                    GameState.FINISHED
+                    GameState.Started,
+                    GameState.Finished
                 )
 
             if (isStartedOrFinishedState) {
@@ -125,8 +122,8 @@ fun GamePanelScreen(
             GameMainPanel {
                 val isNotStartedOrTopicSelectionState =
                     gameControlState.gameState in persistentListOf(
-                        GameState.NOT_STARTED,
-                        GameState.TOPIC_SELECTION
+                        GameState.NotStarted,
+                        GameState.TopicSelection
                     )
 
                 if (isNotStartedOrTopicSelectionState) GameNotStartedPanel()
@@ -157,13 +154,13 @@ fun GamePanelScreen(
                     onClick = viewModel::onSecondaryButtonClicked,
                 )
             }
-            if (gameControlState.gameState == GameState.TOPIC_SELECTION) {
+            if (gameControlState.gameState == GameState.TopicSelection) {
                 GameTopicSelectionDialog(
                     topics = GameTopic.entries.map { it.description }.toPersistentList(),
                     onCancel = viewModel::onCancelTopicSelection,
                     onStart = viewModel::onTopicSelected,
                 )
-            } else if (gameControlState.gameState == GameState.FINISHED) {
+            } else if (gameControlState.gameState == GameState.Finished) {
                 val context = LocalContext.current
 
                 GameFinishedScoreDialog(

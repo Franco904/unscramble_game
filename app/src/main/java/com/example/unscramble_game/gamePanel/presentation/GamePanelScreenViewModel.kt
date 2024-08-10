@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.domain.models.RoundGuess
+import com.example.unscramble_game.core.domain.validation.ValidationResult
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
 import com.example.unscramble_game.gamePanel.presentation.models.GameControlState
@@ -59,7 +60,7 @@ class GamePanelScreenViewModel : ViewModel() {
 
         val guessValidationResult = gameFormState.value.guess.validate()
 
-        if (!guessValidationResult.isSuccessful) {
+        if (guessValidationResult is ValidationResult.Error) {
             _gameFormState.update {
                 it.copy(guessError = guessValidationResult.error.toPresentationMessage())
             }
@@ -68,24 +69,24 @@ class GamePanelScreenViewModel : ViewModel() {
 
     fun onPrimaryButtonClicked() {
         when (gameControlState.value.gameState) {
-            GameState.NOT_STARTED -> initTopicSelection()
-            GameState.TOPIC_SELECTION -> {}
-            GameState.STARTED -> submitGuess()
-            GameState.FINISHED -> restartGame()
+            GameState.NotStarted -> initTopicSelection()
+            GameState.TopicSelection -> {}
+            GameState.Started -> submitGuess()
+            GameState.Finished -> restartGame()
         }
     }
 
     private fun initTopicSelection() {
         _gameControlState.update {
             it.copy(
-                gameState = GameState.TOPIC_SELECTION,
+                gameState = GameState.TopicSelection,
                 topic = null,
             )
         }
     }
 
     fun onCancelTopicSelection() {
-        _gameControlState.update { it.copy(gameState = GameState.NOT_STARTED) }
+        _gameControlState.update { it.copy(gameState = GameState.NotStarted) }
     }
 
     fun onTopicSelected(selectedTopicName: String?) {
@@ -123,7 +124,7 @@ class GamePanelScreenViewModel : ViewModel() {
 
         _gameControlState.update {
             GameControlState(
-                gameState = GameState.STARTED,
+                gameState = GameState.Started,
                 topic = topic,
                 totalScore = 0,
                 round = 1,
@@ -163,7 +164,7 @@ class GamePanelScreenViewModel : ViewModel() {
             gameWords.add(newRoundWord)
             gameScrambledWords.add(newScrambledRoundWord)
         } else {
-            _gameControlState.update { it.copy(gameState = GameState.FINISHED) }
+            _gameControlState.update { it.copy(gameState = GameState.Finished) }
         }
 
         guesses.add(gameFormState.value.guess.text)
@@ -181,7 +182,7 @@ class GamePanelScreenViewModel : ViewModel() {
             )
         }
 
-        if (!guessValidationResult.isSuccessful) onValidationFailed()
+        if (guessValidationResult is ValidationResult.Error) onValidationFailed()
     }
 
     fun restartGame() = initTopicSelection()
@@ -189,7 +190,7 @@ class GamePanelScreenViewModel : ViewModel() {
     fun onSecondaryButtonClicked() {
         val gameState = gameControlState.value.gameState
 
-        if (gameState == GameState.STARTED) skipWord()
+        if (gameState == GameState.Started) skipWord()
     }
 
     private fun skipWord() {
@@ -208,7 +209,7 @@ class GamePanelScreenViewModel : ViewModel() {
             gameWords.add(newRoundWord)
             gameScrambledWords.add(newScrambledRoundWord)
         } else {
-            _gameControlState.update { it.copy(gameState = GameState.FINISHED) }
+            _gameControlState.update { it.copy(gameState = GameState.Finished) }
         }
 
         guesses.add(null)
@@ -221,7 +222,7 @@ class GamePanelScreenViewModel : ViewModel() {
     fun quitGame() {
         _gameControlState.update {
             it.copy(
-                gameState = GameState.NOT_STARTED,
+                gameState = GameState.NotStarted,
                 primaryButtonText = R.string.unscramble_game_start_game_primary_btn,
                 secondaryButtonText = R.string.unscramble_game_no_secondary_btn,
             )
