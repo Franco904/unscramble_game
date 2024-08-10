@@ -3,7 +3,6 @@ package com.example.unscramble_game.gamePanel.presentation
 import androidx.lifecycle.ViewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
-import com.example.unscramble_game.core.domain.models.RoundGuess
 import com.example.unscramble_game.core.domain.validation.ValidationResult
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
@@ -49,7 +48,7 @@ class GamePanelScreenViewModel : ViewModel() {
     val gameFormState: StateFlow<GameFormState> = _gameFormState
 
     fun onGuessTextChanged(newGuessText: String) {
-        _gameFormState.update { it.copy(guess = RoundGuess(text = newGuessText)) }
+        _gameFormState.update { it.copy(guess = it.guess.copy(value = newGuessText)) }
     }
 
     fun onGuessFieldFocusChanged(isFocused: Boolean) {
@@ -145,7 +144,7 @@ class GamePanelScreenViewModel : ViewModel() {
 
         val currentRoundWord = gameWords.last()
         val hasScoredInRound =
-            gameFormState.value.guess.text.lowercase() == currentRoundWord.lowercase()
+            gameFormState.value.guess.value.lowercase() == currentRoundWord.lowercase()
         val currentTotalScore = gameControlState.value.totalScore
 
         if (gameControlState.value.round != LAST_ROUND) {
@@ -167,7 +166,7 @@ class GamePanelScreenViewModel : ViewModel() {
             _gameControlState.update { it.copy(gameState = GameState.Finished) }
         }
 
-        guesses.add(gameFormState.value.guess.text)
+        guesses.add(gameFormState.value.guess.value)
         resetGuessState()
 
         scores.add(hasScoredInRound)
@@ -232,7 +231,7 @@ class GamePanelScreenViewModel : ViewModel() {
     private fun resetGuessState() {
         _gameFormState.update {
             it.copy(
-                guess = RoundGuess(text = ""),
+                guess = it.guess.copy(value = ""),
                 guessError = null,
             )
         }

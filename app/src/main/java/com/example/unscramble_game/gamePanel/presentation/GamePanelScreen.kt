@@ -59,9 +59,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
+import com.example.unscramble_game.core.presentation.modifiers.onClick
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
-import com.example.unscramble_game.core.presentation.modifiers.onClick
 import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
 import com.example.unscramble_game.core.presentation.utils.style
 import com.example.unscramble_game.core.presentation.utils.textSpan
@@ -130,7 +130,7 @@ fun GamePanelScreen(
                 else GameStartedPanel(
                     round = gameControlState.round.toString(),
                     scrambledRoundWord = gameControlState.scrambledRoundWord,
-                    guess = gameFormState.guess.text,
+                    guess = gameFormState.guess.value,
                     guessError = gameFormState.guessError,
                     onGuessChanged = viewModel::onGuessTextChanged,
                     onGuessInputDone = { focusManager.clearFocus() },
