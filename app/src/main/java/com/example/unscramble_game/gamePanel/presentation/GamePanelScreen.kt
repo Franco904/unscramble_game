@@ -61,7 +61,7 @@ import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
-import com.example.unscramble_game.core.presentation.utils.onClick
+import com.example.unscramble_game.core.presentation.modifiers.onClick
 import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
 import com.example.unscramble_game.core.presentation.utils.style
 import com.example.unscramble_game.core.presentation.utils.textSpan

@@ -1,4 +1,4 @@
-package com.example.unscramble_game.core.presentation.utils
+package com.example.unscramble_game.core.presentation.modifiers
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.Modifier
