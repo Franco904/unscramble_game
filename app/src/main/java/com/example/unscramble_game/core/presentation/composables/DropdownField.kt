@@ -52,7 +52,8 @@ fun DropdownField(
                 onValueChange = {},
                 placeholder = { Text(placeholderText) },
                 trailingIcon = {
-                    val icon = if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+                    val icon =
+                        if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
                     Icon(
                         icon,
                         contentDescription = null,
