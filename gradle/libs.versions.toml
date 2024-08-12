@@ -17,7 +17,7 @@ navigationCompose = "2.8.0-beta05"
 serialization = "1.6.3"
 
 # Plugins
-agp = "8.3.2"
+agp = "8.5.1"
 kotlin = "2.0.0"
 
 [libraries]
