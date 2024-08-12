@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 sealed interface Routes {
     @Serializable
-    object GamePanel
+    data object GamePanel
 
     @Serializable
-    object PreviousGames
+    data object PreviousGames
 }
