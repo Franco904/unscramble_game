@@ -1,38 +1,42 @@
 package com.example.unscramble_game.previousGames.presentation
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.previousGames.presentation.models.PreviousGameState
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
 fun PreviousGamesScreen(
@@ -46,76 +50,27 @@ fun PreviousGamesScreen(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier
     ) { innerPadding ->
-        val previousGamesGrouped = getPreviousGames()
+        val topPadding = 12.dp + innerPadding.calculateTopPadding()
+        val previousGamesGrouped = PreviousGamesDataSource.getPreviousGames()
 
-        Column(
+        LazyColumn(
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                top = topPadding,
+                end = 16.dp,
+                bottom = 32.dp,
+            ),
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    start = 16.dp,
-                    top = 12.dp + innerPadding.calculateTopPadding(),
-                    end = 16.dp,
-                    bottom = 32.dp,
-                )
         ) {
-            for (dayAndPreviousGames in previousGamesGrouped.entries) {
-                val (day, games) = dayAndPreviousGames
-
-                Text(
-                    text = day,
-                    style = MaterialTheme.typography.bodyLarge,
-                    letterSpacing = 0.5.sp,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                for (game in games) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        ),
-                        shape = MaterialTheme.shapes.small,
-                        onClick = {},
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    start = 18.dp,
-                                    top = 16.dp,
-                                    end = 12.dp,
-                                )
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp)
-                            ) {
-                                Text(
-                                    text = game.topicText!!,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Text(
-                                    text = game.durationAndScoredRoundsText!!,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                                )
-                            }
-                            Text(
-                                text = game.totalScoreText!!,
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                                modifier = Modifier
-                                    .padding(bottom = 8.dp)
-                                    .align(Alignment.BottomEnd)
-                            )
-                        }
-                    }
-                    if (game != games.last()) {
-                        Spacer(modifier = Modifier.height(14.dp))
-                    }
+            previousGamesGrouped.forEach { (date, games) ->
+                item {
+                    Text(text = date, style = MaterialTheme.typography.bodyLarge)
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-                if (dayAndPreviousGames != previousGamesGrouped.entries.last()) {
-                    Spacer(modifier = Modifier.height(18.dp))
+                items(games, key = { game -> game.topicText ?: "" }) { game ->
+                    GameItem(game)
+                    Spacer(modifier = Modifier.height(14.dp))
                 }
             }
         }
@@ -154,39 +109,68 @@ fun PreviousGamesTopBar(
     )
 }
 
-private fun getPreviousGames() = persistentMapOf(
-    "Today" to persistentListOf(
-        PreviousGameState(
-            topicText = GameTopic.MINECRAFT_MOBS.description,
-            durationAndScoredRoundsText = "5m58s • Scored 8/10",
-            totalScoreText = "80",
-        ),
-        PreviousGameState(
-            topicText = GameTopic.BASKETBALL_TEAMS.description,
-            durationAndScoredRoundsText = "1m5s • Scored 10/10",
-            totalScoreText = "100",
-        ),
-    ),
-    "Yesterday" to persistentListOf(
-        PreviousGameState(
-            topicText = GameTopic.COLOR_NAMES.description,
-            durationAndScoredRoundsText = "9m34s • Scored 2/10",
-            totalScoreText = "20",
-        ),
-    ),
-    "July 15" to persistentListOf(
-        PreviousGameState(
-            topicText = GameTopic.HARRY_POTTER_SPELLS.description,
-            durationAndScoredRoundsText = "46s • Scored 9/10",
-            totalScoreText = "90",
-        ),
-        PreviousGameState(
-            topicText = GameTopic.SPORT_NAMES.description,
-            durationAndScoredRoundsText = "3m24s • Scored 4/10",
-            totalScoreText = "40",
-        ),
-    ),
-)
+@Composable
+fun GameItem(
+    game: PreviousGameState,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val isCardPressed by interactionSource.collectIsPressedAsState()
+
+    var elevation by remember { mutableStateOf(0.dp) }
+    val elevationAnimated by animateDpAsState(
+        targetValue = elevation,
+        label = "elevationAnimated",
+    )
+
+    LaunchedEffect(isCardPressed) {
+        elevation = if (isCardPressed) 2.dp else 0.dp
+    }
+
+    Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        shadowElevation = elevationAnimated,
+        shape = MaterialTheme.shapes.small,
+        interactionSource = interactionSource,
+        onClick = {},
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 18.dp,
+                    top = 16.dp,
+                    end = 12.dp,
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            ) {
+                Text(
+                    text = game.topicText!!,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = game.durationAndScoredRoundsText!!,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                )
+            }
+            Text(
+                text = game.totalScoreText!!,
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .align(Alignment.BottomEnd)
+            )
+        }
+    }
+}
 
 @Preview
 @Composable

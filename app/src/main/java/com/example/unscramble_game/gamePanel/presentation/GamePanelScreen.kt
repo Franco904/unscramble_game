@@ -2,6 +2,7 @@ package com.example.unscramble_game.gamePanel.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -59,7 +61,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.domain.models.GameTopic
-import com.example.unscramble_game.core.presentation.modifiers.onClick
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
 import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
@@ -96,7 +97,9 @@ fun GamePanelScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .onClick { focusManager.clearFocus() }
+                .pointerInput(Unit) {
+                    detectTapGestures { focusManager.clearFocus() }
+                }
                 .padding(
                     horizontal = 24.dp + innerPadding.calculateLeftPadding(LayoutDirection.Ltr),
                     vertical = 32.dp + innerPadding.calculateTopPadding(),
