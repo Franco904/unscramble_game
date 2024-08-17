@@ -68,7 +68,7 @@ import com.example.unscramble_game.core.presentation.utils.style
 import com.example.unscramble_game.core.presentation.utils.textSpan
 import com.example.unscramble_game.gamePanel.presentation.composables.GameFinishedScoreDialog
 import com.example.unscramble_game.gamePanel.presentation.composables.GameTopicSelectionDialog
-import com.example.unscramble_game.gamePanel.presentation.models.GameState
+import com.example.unscramble_game.gamePanel.presentation.models.GameStatus
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
@@ -78,11 +78,11 @@ fun GamePanelScreen(
     viewModel: GamePanelScreenViewModel = viewModel<GamePanelScreenViewModel>(),
     onNavigateToGameHistory: () -> Unit = {},
 ) {
-    val gameControlState by viewModel.gameControlState.collectAsStateWithLifecycle()
-    val gameFormState by viewModel.gameFormState.collectAsStateWithLifecycle()
+    val gameControlUiState by viewModel.gameControlUiState.collectAsStateWithLifecycle()
+    val gameFormUiState by viewModel.gameFormUiState.collectAsStateWithLifecycle()
 
     val isGameNotStartedState =
-        gameControlState.gameState in listOf(GameState.NotStarted, GameState.TopicSelection)
+        gameControlUiState.gameStatus in listOf(GameStatus.NotStarted, GameStatus.TopicSelection)
 
     val focusManager = LocalFocusManager.current
 
@@ -107,34 +107,34 @@ fun GamePanelScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             val isStartedOrFinishedState =
-                gameControlState.gameState in persistentListOf(
-                    GameState.Started,
-                    GameState.Finished
+                gameControlUiState.gameStatus in persistentListOf(
+                    GameStatus.Started,
+                    GameStatus.Finished
                 )
 
             if (isStartedOrFinishedState) {
                 Row {
-                    GameTotalScoreSection(totalScore = gameControlState.totalScore.toString())
+                    GameTotalScoreSection(totalScore = gameControlUiState.totalScore.toString())
                     Spacer(modifier = Modifier.weight(1f))
                     GameTopicSection(
-                        topic = gameControlState.topic?.description!!,
+                        topic = gameControlUiState.topic?.description!!,
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
             GameMainPanel {
                 val isNotStartedOrTopicSelectionState =
-                    gameControlState.gameState in persistentListOf(
-                        GameState.NotStarted,
-                        GameState.TopicSelection
+                    gameControlUiState.gameStatus in persistentListOf(
+                        GameStatus.NotStarted,
+                        GameStatus.TopicSelection
                     )
 
                 if (isNotStartedOrTopicSelectionState) GameNotStartedPanel()
                 else GameStartedPanel(
-                    round = gameControlState.round.toString(),
-                    scrambledRoundWord = gameControlState.scrambledRoundWord,
-                    guess = gameFormState.guess.value,
-                    guessError = gameFormState.guessError,
+                    round = gameControlUiState.round.toString(),
+                    scrambledRoundWord = gameControlUiState.scrambledRoundWord,
+                    guess = gameFormUiState.guess.value,
+                    guessError = gameFormUiState.guessError,
                     onGuessChanged = viewModel::onGuessTextChanged,
                     onGuessInputDone = { focusManager.clearFocus() },
                     onFocusChanged = viewModel::onGuessFieldFocusChanged,
@@ -143,7 +143,7 @@ fun GamePanelScreen(
             Spacer(modifier = Modifier.height(24.dp))
             GamePrimaryButton(
                 buttonText = stringResource(
-                    id = gameControlState.primaryButtonText
+                    id = gameControlUiState.primaryButtonText
                         ?: R.string.unscramble_game_start_game_primary_btn
                 ),
                 onClick = viewModel::onPrimaryButtonClicked,
@@ -151,28 +151,28 @@ fun GamePanelScreen(
             AnimatedVisibility(isStartedOrFinishedState) {
                 GameSecondaryButton(
                     buttonText = stringResource(
-                        id = gameControlState.secondaryButtonText
+                        id = gameControlUiState.secondaryButtonText
                             ?: R.string.unscramble_game_no_secondary_btn
                     ),
                     onClick = viewModel::onSecondaryButtonClicked,
                 )
             }
-            if (gameControlState.gameState == GameState.TopicSelection) {
+            if (gameControlUiState.gameStatus == GameStatus.TopicSelection) {
                 GameTopicSelectionDialog(
                     topics = GameTopic.entries.map { it.description }.toPersistentList(),
                     onCancel = viewModel::onCancelTopicSelection,
                     onStart = viewModel::onTopicSelected,
                 )
-            } else if (gameControlState.gameState == GameState.Finished) {
+            } else if (gameControlUiState.gameStatus == GameStatus.Finished) {
                 val context = LocalContext.current
 
                 GameFinishedScoreDialog(
-                    totalScore = gameControlState.totalScore,
+                    totalScore = gameControlUiState.totalScore,
                     onShareGame = {
                         context.showTextShareSheet(
                             text = context.getString(
                                 R.string.unscramble_game_sharesheet_share_your_game_with_text,
-                                gameControlState.totalScore.toString(),
+                                gameControlUiState.totalScore.toString(),
                             ),
                         )
                     },

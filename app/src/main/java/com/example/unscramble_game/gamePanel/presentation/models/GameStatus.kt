@@ -1,6 +1,6 @@
 package com.example.unscramble_game.gamePanel.presentation.models
 
-enum class GameState {
+enum class GameStatus {
     NotStarted,
     TopicSelection,
     Started,

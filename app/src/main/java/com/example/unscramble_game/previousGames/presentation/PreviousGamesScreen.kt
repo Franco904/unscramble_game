@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
-import com.example.unscramble_game.previousGames.presentation.models.PreviousGameState
+import com.example.unscramble_game.previousGames.presentation.models.PreviousGameUiState
 
 @Composable
 fun PreviousGamesScreen(
@@ -116,7 +116,7 @@ fun PreviousGamesTopBar(
 
 @Composable
 fun GameItem(
-    game: PreviousGameState,
+    game: PreviousGameUiState,
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }

@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.example.unscramble_game.core.domain.validation.InputField
 import com.example.unscramble_game.core.domain.validation.validators.roundGuessValidator
 
-data class GameFormState(
+data class GameFormUiState(
     val guess: InputField<String> = InputField("", validator = roundGuessValidator),
     @StringRes
     val guessError: Int? = null,
