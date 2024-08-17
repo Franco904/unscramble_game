@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         }
         composable<Routes.PreviousGames> {
             PreviousGamesScreen(
-                onBackNavigation = navController::popBackStack,
+                onUpNavigation = navController::navigateUp,
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.example.unscramble_game.previousGames.presentation
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -41,11 +42,11 @@ import com.example.unscramble_game.previousGames.presentation.models.PreviousGam
 @Composable
 fun PreviousGamesScreen(
     modifier: Modifier = Modifier,
-    onBackNavigation: () -> Unit = {},
+    onUpNavigation: () -> Boolean = { true },
 ) {
     Scaffold(
         topBar = {
-            PreviousGamesTopBar { onBackNavigation() }
+            PreviousGamesTopBar { onUpNavigation() }
         },
         containerColor = MaterialTheme.colorScheme.background,
         modifier = modifier
@@ -81,7 +82,7 @@ fun PreviousGamesScreen(
 @Composable
 fun PreviousGamesTopBar(
     modifier: Modifier = Modifier,
-    onBackNavigation: () -> Unit = {},
+    onUpNavigation: () -> Boolean,
 ) {
     TopAppBar(
         title = {
@@ -94,7 +95,11 @@ fun PreviousGamesTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBackNavigation) {
+            IconButton(onClick = {
+                onUpNavigation().takeIf { wasSucceeded -> !wasSucceeded }?.run {
+                    Log.e("PreviousGamesScreen", "Navigation up failed!")
+                }
+            }) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
