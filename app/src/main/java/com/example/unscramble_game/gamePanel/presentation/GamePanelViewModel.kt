@@ -1,21 +1,28 @@
 package com.example.unscramble_game.gamePanel.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.unscramble_game.R
-import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.domain.validation.ValidationResult
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
+import com.example.unscramble_game.gamePanel.domain.useCases.GetAllTopics
 import com.example.unscramble_game.gamePanel.presentation.models.GameControlUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameFormUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameStatus
-import com.example.unscramble_game.gamePanel.presentation.utils.GameTopicWordsBuilder.getWords
+import com.example.unscramble_game.gamePanel.presentation.models.TopicUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GamePanelScreenViewModel : ViewModel() {
-    /**
+@HiltViewModel
+class GamePanelViewModel @Inject constructor(
+    private val getAllTopics: GetAllTopics,
+) : ViewModel() {
+    /*
      * Business logic attributes
      */
     private val gameWords = mutableListOf<String>()
@@ -26,19 +33,9 @@ class GamePanelScreenViewModel : ViewModel() {
 
     private val remainingWords = mutableListOf<String>()
 
-    // TODO: Carregar lista aleatoriamente partindo de uma lista maior
-    //  (ao invés de ir aleatoriamente selecionando a cada round)
-    private var topicToWords = mapOf(
-        GameTopic.ADJECTIVES to GameTopic.ADJECTIVES.getWords(),
-        GameTopic.ANIMAL_NAMES to GameTopic.ANIMAL_NAMES.getWords(),
-        GameTopic.BASKETBALL_TEAMS to GameTopic.BASKETBALL_TEAMS.getWords(),
-        GameTopic.COLOR_NAMES to GameTopic.COLOR_NAMES.getWords(),
-        GameTopic.HARRY_POTTER_SPELLS to GameTopic.HARRY_POTTER_SPELLS.getWords(),
-        GameTopic.SPORT_NAMES to GameTopic.SPORT_NAMES.getWords(),
-        GameTopic.MINECRAFT_MOBS to GameTopic.MINECRAFT_MOBS.getWords(),
-    )
+    private lateinit var topicToWords: Map<String, List<String>>
 
-    /**
+    /*
      * Screen State/UI logic attributes
      */
     private val _gameControlUiState = MutableStateFlow(GameControlUiState())
@@ -46,6 +43,22 @@ class GamePanelScreenViewModel : ViewModel() {
 
     private val _gameFormUiState = MutableStateFlow(GameFormUiState())
     val gameFormUiState: StateFlow<GameFormUiState> = _gameFormUiState
+
+    private val _topics = MutableStateFlow(listOf<TopicUiState>())
+    val topics: StateFlow<List<TopicUiState>> = _topics
+
+    fun init() {
+        viewModelScope.launch {
+            // TODO: Create event flow for ui events
+            val topics = getAllTopics().data ?: throw IllegalStateException("No topics!")
+
+            topicToWords = topics.associate { topic ->
+                topic.name to topic.words.map { word -> word.name }
+            }
+
+            _topics.update { topics.map { topic -> TopicUiState.fromTopic(topic) } }
+        }
+    }
 
     fun onGuessTextChanged(newGuessText: String) {
         _gameFormUiState.update { it.copy(guess = it.guess.copy(value = newGuessText)) }
@@ -79,7 +92,7 @@ class GamePanelScreenViewModel : ViewModel() {
         _gameControlUiState.update {
             it.copy(
                 gameStatus = GameStatus.TopicSelection,
-                topic = null,
+                topicName = null,
             )
         }
     }
@@ -89,8 +102,9 @@ class GamePanelScreenViewModel : ViewModel() {
     }
 
     fun onTopicSelected(selectedTopicName: String?) {
-        val topicWords =
-            topicToWords.entries.find { it.key.description == selectedTopicName }
+        val topicWords = topicToWords.entries.find { (topicName, _) ->
+            topicName == selectedTopicName
+        }
 
         if (topicWords == null) {
             onCancelTopicSelection()
@@ -101,7 +115,7 @@ class GamePanelScreenViewModel : ViewModel() {
         remainingWords.addAll(topicWords.value)
 
         startGame(
-            topic = topicWords.key,
+            topicName = topicWords.key,
             firstRoundWord = remainingWords.first(),
         )
     }
@@ -116,7 +130,7 @@ class GamePanelScreenViewModel : ViewModel() {
     }
 
     private fun startGame(
-        topic: GameTopic,
+        topicName: String,
         firstRoundWord: String,
     ) {
         val scrambledFirstRoundWord = firstRoundWord.scramble()
@@ -124,7 +138,7 @@ class GamePanelScreenViewModel : ViewModel() {
         _gameControlUiState.update {
             GameControlUiState(
                 gameStatus = GameStatus.Started,
-                topic = topic,
+                topicName = topicName,
                 totalScore = 0,
                 round = 1,
                 scrambledRoundWord = scrambledFirstRoundWord,

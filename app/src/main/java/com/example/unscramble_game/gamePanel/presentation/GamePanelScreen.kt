@@ -60,7 +60,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
-import com.example.unscramble_game.core.domain.models.GameTopic
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
 import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
@@ -75,11 +74,12 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun GamePanelScreen(
     modifier: Modifier = Modifier,
-    viewModel: GamePanelScreenViewModel = viewModel<GamePanelScreenViewModel>(),
+    viewModel: GamePanelViewModel = viewModel(),
     onNavigateToGameHistory: () -> Unit = {},
 ) {
     val gameControlUiState by viewModel.gameControlUiState.collectAsStateWithLifecycle()
     val gameFormUiState by viewModel.gameFormUiState.collectAsStateWithLifecycle()
+    val topics by viewModel.topics.collectAsStateWithLifecycle()
 
     val isGameNotStartedState =
         gameControlUiState.gameStatus in listOf(GameStatus.NotStarted, GameStatus.TopicSelection)
@@ -117,7 +117,7 @@ fun GamePanelScreen(
                     GameTotalScoreSection(totalScore = gameControlUiState.totalScore.toString())
                     Spacer(modifier = Modifier.weight(1f))
                     GameTopicSection(
-                        topic = gameControlUiState.topic?.description!!,
+                        topic = gameControlUiState.topicName ?: "",
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -159,7 +159,7 @@ fun GamePanelScreen(
             }
             if (gameControlUiState.gameStatus == GameStatus.TopicSelection) {
                 GameTopicSelectionDialog(
-                    topics = GameTopic.entries.map { it.description }.toPersistentList(),
+                    topics = topics.map { it.name ?: "" }.toPersistentList(),
                     onCancel = viewModel::onCancelTopicSelection,
                     onStart = viewModel::onTopicSelected,
                 )
