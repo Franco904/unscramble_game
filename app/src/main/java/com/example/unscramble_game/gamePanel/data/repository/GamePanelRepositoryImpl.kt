@@ -10,7 +10,7 @@ class GamePanelRepositoryImpl(
 ) : GamePanelRepository {
     override suspend fun getAllTopics(): DataResult<List<Topic>> {
         return try {
-            val topics = topicDao.getAll().entries.map { topicWordsEntry ->
+            val topics = topicDao.getAllWithWords().entries.map { topicWordsEntry ->
                 val (topic, words) = topicWordsEntry.key to topicWordsEntry.value
 
                 Topic(

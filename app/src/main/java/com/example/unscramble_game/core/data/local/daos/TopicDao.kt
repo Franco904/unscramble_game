@@ -11,5 +11,5 @@ interface TopicDao {
         SELECT * FROM topics t
         INNER JOIN words w ON t.id = w.topic_id
     """)
-    suspend fun getAll(): Map<TopicEntity, List<WordEntity>>
+    suspend fun getAllWithWords(): Map<TopicEntity, List<WordEntity>>
 }
