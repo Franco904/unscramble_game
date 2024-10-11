@@ -57,8 +57,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
@@ -74,7 +74,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun GamePanelScreen(
     modifier: Modifier = Modifier,
-    viewModel: GamePanelViewModel = viewModel(),
+    viewModel: GamePanelViewModel = hiltViewModel(),
     onNavigateToGameHistory: () -> Unit = {},
 ) {
     val gameControlUiState by viewModel.gameControlUiState.collectAsStateWithLifecycle()

@@ -10,7 +10,14 @@ class GamePanelRepositoryImpl(
 ) : GamePanelRepository {
     override suspend fun getAllTopics(): DataResult<List<Topic>> {
         return try {
-            val topics = topicDao.getAll().map { it.toTopic() }
+            val topics = topicDao.getAll().entries.map { topicWordsEntry ->
+                val (topic, words) = topicWordsEntry.key to topicWordsEntry.value
+
+                Topic(
+                    name = topic.name,
+                    words = words.map { it.toWord() },
+                )
+            }
 
             DataResult.Success(data = topics)
         } catch (e: Exception) {

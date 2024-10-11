@@ -1,6 +1,6 @@
 package com.example.unscramble_game
 
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -13,7 +13,7 @@ object RouteHandler {
     fun NavGraphBuilder.routes(navController: NavController) {
         composable<Routes.GamePanel> {
             GamePanelScreen(
-                viewModel = viewModel<GamePanelViewModel>().alsoInvoke { init() },
+                viewModel = hiltViewModel<GamePanelViewModel>().alsoInvoke { init() },
                 onNavigateToGameHistory = {
                     navController.navigate(Routes.PreviousGames)
                 },

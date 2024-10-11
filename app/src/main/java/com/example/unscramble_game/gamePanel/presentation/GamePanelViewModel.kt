@@ -3,6 +3,7 @@ package com.example.unscramble_game.gamePanel.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unscramble_game.R
+import com.example.unscramble_game.core.domain.utils.DataResult
 import com.example.unscramble_game.core.domain.validation.ValidationResult
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
@@ -49,14 +50,28 @@ class GamePanelViewModel @Inject constructor(
 
     fun init() {
         viewModelScope.launch {
-            // TODO: Create event flow for ui events
-            val topics = getAllTopics().data ?: throw IllegalStateException("No topics!")
+            loadGameTopics()
+        }
+    }
 
-            topicToWords = topics.associate { topic ->
-                topic.name to topic.words.map { word -> word.name }
+    private suspend fun loadGameTopics() {
+        when (val result = getAllTopics()) {
+            is DataResult.Loading -> {}
+            is DataResult.Success -> {
+                val topics = result.data ?: emptyList()
+
+                topicToWords = topics.associate { topic ->
+                    topic.name to topic.words.map { word -> word.name }
+                }
+
+                _topics.update {
+                    topics.map { topic -> TopicUiState.fromTopic(topic) }
+                }
             }
-
-            _topics.update { topics.map { topic -> TopicUiState.fromTopic(topic) } }
+            is DataResult.Error -> {
+                // TODO: Create event flow for ui events
+//                sendUiEvent(UiEvents.Snackbar("Couldn't load game topics"))
+            }
         }
     }
 

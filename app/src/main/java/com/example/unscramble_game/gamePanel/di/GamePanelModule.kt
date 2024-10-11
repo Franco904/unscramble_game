@@ -1,7 +1,7 @@
 package com.example.unscramble_game.gamePanel.di
 
+import android.app.Application
 import androidx.room.Room
-import com.example.unscramble_game.UnscrambleGameApplication
 import com.example.unscramble_game.core.data.local.UnscrambleGameDatabase
 import com.example.unscramble_game.core.data.local.UnscrambleGameDatabase.Companion.DB_NAME
 import com.example.unscramble_game.gamePanel.data.repository.GamePanelRepositoryImpl
@@ -35,7 +35,7 @@ class GamePanelModule {
     @Provides
     @Singleton
     fun provideDatabase(
-        application: UnscrambleGameApplication,
+        application: Application,
     ): UnscrambleGameDatabase {
         return Room.databaseBuilder(
             context = application,

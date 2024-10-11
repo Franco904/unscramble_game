@@ -91,6 +91,7 @@ dependencies {
     // Hilt DI
     implementation(libs.dagger.hilt.android)
     ksp(libs.dagger.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 
     // Kotlin
     implementation(libs.kotlin.collections.immutable)
