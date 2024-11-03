@@ -3,11 +3,14 @@ package com.example.unscramble_game.gamePanel.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unscramble_game.R
-import com.example.unscramble_game.core.domain.utils.DataResult
+import com.example.unscramble_game.core.domain.models.Game
+import com.example.unscramble_game.core.domain.models.Round
+import com.example.unscramble_game.core.domain.models.Topic
+import com.example.unscramble_game.core.domain.models.Word
 import com.example.unscramble_game.core.domain.validation.ValidationResult
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
-import com.example.unscramble_game.gamePanel.domain.useCases.GetAllTopics
+import com.example.unscramble_game.gamePanel.domain.GamePanelRepository
 import com.example.unscramble_game.gamePanel.presentation.models.GameControlUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameFormUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameStatus
@@ -17,24 +20,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class GamePanelViewModel @Inject constructor(
-    private val getAllTopics: GetAllTopics,
+    private val repository: GamePanelRepository,
 ) : ViewModel() {
     /*
      * Business logic attributes
      */
-    private val gameWords = mutableListOf<String>()
-    private val gameScrambledWords = mutableListOf<String>()
-    private val guesses = mutableListOf<String?>()
-    private val scores = mutableListOf<Boolean>()
-    private val skips = mutableListOf<Boolean>()
+    private var game: Game? = null
+    private var rounds = mutableListOf<Round>()
+    private val remainingWords = mutableListOf<Word>()
 
-    private val remainingWords = mutableListOf<String>()
-
-    private lateinit var topicToWords: Map<String, List<String>>
+    private lateinit var topicToWords: Map<Topic, List<Word>>
 
     /*
      * Screen State/UI logic attributes
@@ -55,23 +55,19 @@ class GamePanelViewModel @Inject constructor(
     }
 
     private suspend fun loadGameTopics() {
-        when (val result = getAllTopics()) {
-            is DataResult.Loading -> {}
-            is DataResult.Success -> {
-                val topics = result.data ?: emptyList()
+        try {
+            val topics = repository.getAllTopics()
 
-                topicToWords = topics.associate { topic ->
-                    topic.name to topic.words.map { word -> word.name }
-                }
+            topicToWords = topics.associateWith { it.words }
 
-                _topics.update {
-                    topics.map { topic -> TopicUiState.fromTopic(topic) }
-                }
+            _topics.update {
+                topics.map { topic -> TopicUiState.fromTopic(topic) }
             }
-            is DataResult.Error -> {
-                // TODO: Create event flow for ui events
-//                sendUiEvent(UiEvents.Snackbar("Couldn't load game topics"))
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            // TODO: Create event flow for ui events
+            // sendUiEvent(UiEvents.Snackbar("Couldn't load game topics"))
         }
     }
 
@@ -117,8 +113,8 @@ class GamePanelViewModel @Inject constructor(
     }
 
     fun onTopicSelected(selectedTopicName: String?) {
-        val topicWords = topicToWords.entries.find { (topicName, _) ->
-            topicName == selectedTopicName
+        val topicWords = topicToWords.entries.find { (topic, _) ->
+            topic.name == selectedTopicName
         }
 
         if (topicWords == null) {
@@ -126,29 +122,33 @@ class GamePanelViewModel @Inject constructor(
             return
         }
 
-        clearGameHistoryData()
-        remainingWords.addAll(topicWords.value)
+        val topic = topicWords.key
+        val words = topicWords.value
+
+        clearGameControls()
+        remainingWords.addAll(words)
+
+        game = Game(
+            topic = topic,
+            startTimestamp = Calendar.getInstance().timeInMillis,
+        )
 
         startGame(
-            topicName = topicWords.key,
+            topicName = topic.name,
             firstRoundWord = remainingWords.first(),
         )
     }
 
-    private fun clearGameHistoryData() {
-        gameWords.clear()
-        gameScrambledWords.clear()
-        guesses.clear()
-        scores.clear()
-        skips.clear()
+    private fun clearGameControls() {
+        rounds.clear()
         remainingWords.clear()
     }
 
     private fun startGame(
         topicName: String,
-        firstRoundWord: String,
+        firstRoundWord: Word,
     ) {
-        val scrambledFirstRoundWord = firstRoundWord.scramble()
+        val scrambledFirstRoundWord = firstRoundWord.name.scramble()
 
         _gameControlUiState.update {
             GameControlUiState(
@@ -164,42 +164,68 @@ class GamePanelViewModel @Inject constructor(
 
         resetGuessState()
 
-        gameWords.add(firstRoundWord)
-        gameScrambledWords.add(scrambledFirstRoundWord)
+        val firstRound = Round(
+            number = 1,
+            game = game!!,
+            word = firstRoundWord,
+            scrambledWord = scrambledFirstRoundWord,
+        )
+
+        rounds.add(firstRound)
+        game = game?.copy(rounds = rounds.toList())
     }
 
     private fun submitGuess() {
         validateRoundGuess(onValidationFailed = { return })
 
-        val currentRoundWord = gameWords.last()
-        val hasScoredInRound =
-            gameFormUiState.value.guess.value.lowercase() == currentRoundWord.lowercase()
+        val currentRound = game!!.rounds.last()
+        val hasScored =
+            gameFormUiState.value.guess.value.lowercase() == currentRound.word.name.lowercase()
+
+        rounds[rounds.lastIndex] = currentRound.copy(
+            guess = gameFormUiState.value.guess.value,
+            isScored = hasScored,
+            isSkipped = false,
+        )
+
         val currentTotalScore = gameControlUiState.value.totalScore
 
         if (gameControlUiState.value.round != LAST_ROUND) {
             remainingWords.remove(remainingWords.first())
+
+            val newRoundNumber = gameControlUiState.value.round + 1
             val newRoundWord = remainingWords.first()
-            val newScrambledRoundWord = newRoundWord.scramble()
+            val newScrambledRoundWord = newRoundWord.name.scramble()
 
             _gameControlUiState.update {
                 it.copy(
-                    totalScore = if (hasScoredInRound) currentTotalScore + 10 else currentTotalScore,
-                    round = gameControlUiState.value.round + 1,
+                    totalScore = if (hasScored) currentTotalScore + 10 else currentTotalScore,
+                    round = newRoundNumber,
                     scrambledRoundWord = newScrambledRoundWord,
                 )
             }
 
-            gameWords.add(newRoundWord)
-            gameScrambledWords.add(newScrambledRoundWord)
+            val newRound = Round(
+                number = newRoundNumber,
+                game = game!!,
+                word = newRoundWord,
+                scrambledWord = newScrambledRoundWord,
+            )
+
+            rounds.add(newRound)
+            game = game?.copy(rounds = rounds.toList())
         } else {
-            _gameControlUiState.update { it.copy(gameStatus = GameStatus.Finished) }
+            _gameControlUiState.update {
+                it.copy(
+                    gameStatus = GameStatus.Finished,
+                    totalScore = if (hasScored) currentTotalScore + 10 else currentTotalScore,
+                )
+            }
+
+            onGameFinished()
         }
 
-        guesses.add(gameFormUiState.value.guess.value)
         resetGuessState()
-
-        scores.add(hasScoredInRound)
-        skips.add(false)
     }
 
     private inline fun validateRoundGuess(onValidationFailed: () -> Unit) {
@@ -222,29 +248,41 @@ class GamePanelViewModel @Inject constructor(
     }
 
     private fun skipWord() {
+        rounds[rounds.lastIndex] = rounds.last().copy(
+            guess = null,
+            isScored = false,
+            isSkipped = true,
+        )
+
         if (gameControlUiState.value.round != LAST_ROUND) {
             remainingWords.remove(remainingWords.first())
+
+            val newRoundNumber = gameControlUiState.value.round + 1
             val newRoundWord = remainingWords.first()
-            val newScrambledRoundWord = newRoundWord.scramble()
+            val newScrambledRoundWord = newRoundWord.name.scramble()
 
             _gameControlUiState.update {
                 it.copy(
-                    round = gameControlUiState.value.round + 1,
+                    round = newRoundNumber,
                     scrambledRoundWord = newScrambledRoundWord,
                 )
             }
 
-            gameWords.add(newRoundWord)
-            gameScrambledWords.add(newScrambledRoundWord)
+            val newRound = Round(
+                number = newRoundNumber,
+                game = game!!,
+                word = newRoundWord,
+                scrambledWord = newScrambledRoundWord,
+            )
+
+            rounds.add(newRound)
+            game = game?.copy(rounds = rounds.toList())
         } else {
             _gameControlUiState.update { it.copy(gameStatus = GameStatus.Finished) }
+            onGameFinished()
         }
 
-        guesses.add(null)
         resetGuessState()
-
-        scores.add(false)
-        skips.add(true)
     }
 
     fun quitGame() {
@@ -263,6 +301,24 @@ class GamePanelViewModel @Inject constructor(
                 guess = it.guess.copy(value = ""),
                 guessError = null,
             )
+        }
+    }
+
+    private fun onGameFinished() {
+        game = game?.copy(
+            endTimestamp = Calendar.getInstance().timeInMillis,
+            rounds = rounds,
+        )
+
+        viewModelScope.launch {
+            try {
+                repository.saveGame(game = game!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+                // TODO: Create event flow for ui events
+                // sendUiEvent(UiEvents.Snackbar("Couldn't save last game"))
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.unscramble_game.core.data.local.converters
+package com.example.unscramble_game.core.data.local.database.converters
 
 import androidx.room.TypeConverter
 import java.util.Date

@@ -1,4 +1,4 @@
-package com.example.unscramble_game.core.data.local.entities
+package com.example.unscramble_game.core.data.local.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -10,10 +10,15 @@ data class WordEntity(
     @PrimaryKey
     @ColumnInfo("id")
     val id: Long,
+
     @ColumnInfo("topic_id")
     val topicId: Long,
+
     @ColumnInfo("name")
     val name: String,
 ) {
-    fun toWord() = Word(name = name)
+    fun toWord() = Word(
+        id = id,
+        name = name,
+    )
 }
