@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.GamePanel,
+                    startDestination = Routes.ConditionalCardDraft,
                     builder = { routes(navController) },
                 )
             }
