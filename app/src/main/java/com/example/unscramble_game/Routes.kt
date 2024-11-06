@@ -10,5 +10,5 @@ sealed interface Routes {
     data object PreviousGames
 
     @Serializable
-    data object ConditionalCardDraft
+    data object CidadaoConditionCardDraft
 }

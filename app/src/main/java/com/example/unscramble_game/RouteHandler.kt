@@ -4,6 +4,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.example.unscramble_game.conditionCards.CidadaoConditionCardDraftScreen
 import com.example.unscramble_game.core.presentation.utils.alsoInvoke
 import com.example.unscramble_game.gamePanel.presentation.GamePanelScreen
 import com.example.unscramble_game.gamePanel.presentation.GamePanelViewModel
@@ -23,6 +24,9 @@ object RouteHandler {
             PreviousGamesScreen(
                 onUpNavigation = navController::navigateUp,
             )
+        }
+        composable<Routes.CidadaoConditionCardDraft> {
+            CidadaoConditionCardDraftScreen()
         }
     }
 }

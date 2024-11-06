@@ -18,6 +18,10 @@ val UnscrambleGameTypography = Typography(
         fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
     ),
+    titleMedium = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+    ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
