@@ -78,6 +78,7 @@ fun SimNaoRadioCard(
                 onLimparPress = {
                     isThirdSectionOpened = false
                     currentSimNaoAnswer = null
+                    currentRadioAnswer = null
 
                     isSimNaoInvalid = false
                     isRadioInvalid = false
@@ -85,6 +86,8 @@ fun SimNaoRadioCard(
                 onNaoPress = {
                     isThirdSectionOpened = !mustOpenRadioOnSim
                     currentSimNaoAnswer = false
+                    if (mustOpenRadioOnSim)
+                        currentRadioAnswer = null
 
                     isSimNaoInvalid = false
                     isRadioInvalid = false
@@ -92,6 +95,8 @@ fun SimNaoRadioCard(
                 onSimPress = {
                     isThirdSectionOpened = mustOpenRadioOnSim
                     currentSimNaoAnswer = true
+                    if (!mustOpenRadioOnSim)
+                        currentRadioAnswer = null
 
                     isSimNaoInvalid = false
                     isRadioInvalid = false
