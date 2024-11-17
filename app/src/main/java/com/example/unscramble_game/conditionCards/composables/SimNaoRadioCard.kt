@@ -70,7 +70,7 @@ fun SimNaoRadioCard(
         }
     }
 
-    CidadaoConditionCard(
+    QuestionCard(
         title = title,
         contentSecondSection = {
             ThreeButtonsSection(

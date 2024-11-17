@@ -33,7 +33,7 @@ const val TITLE_EXAMPLE =
     "Você deixou de realizar pequenos trabalhos domésticos, como lavar a louça, arrumar a casa ou fazer limpeza leve?"
 
 @Composable
-fun CidadaoConditionCard(
+fun QuestionCard(
     modifier: Modifier = Modifier,
     title: String,
     contentSecondSection: @Composable () -> Unit,
