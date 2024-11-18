@@ -10,7 +10,7 @@ import com.example.unscramble_game.core.domain.models.Word
 import com.example.unscramble_game.core.domain.validation.ValidationResult
 import com.example.unscramble_game.core.presentation.utils.scramble
 import com.example.unscramble_game.core.presentation.validation.ValidationMessageConverter.toPresentationMessage
-import com.example.unscramble_game.gamePanel.domain.GamePanelRepository
+import com.example.unscramble_game.gamePanel.data.GamePanelRepository
 import com.example.unscramble_game.gamePanel.presentation.models.GameControlUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameFormUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameStatus

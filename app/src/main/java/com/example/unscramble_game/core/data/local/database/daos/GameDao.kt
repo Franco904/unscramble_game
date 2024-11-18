@@ -15,11 +15,13 @@ interface GameDao {
 
     @Query(
         """
-        SELECT t.name AS topicName, g.start_timestamp AS gameStartTimestamp, g.end_timestamp AS gameEndTimestamp,
-        COUNT(r.is_scored) AS scoredRoundsCount FROM games g
+        SELECT g.id AS gameId, t.name AS topicName, g.start_timestamp AS gameStartTimestamp, g.end_timestamp AS gameEndTimestamp,
+        COUNT(CASE WHEN r.is_scored = 1 THEN 1 ELSE NULL END) AS scoredRoundsCount FROM games g
         INNER JOIN topics t ON t.id = g.topic_id
         INNER JOIN rounds r ON g.id = r.game_id
+        WHERE g.start_timestamp >= :startTimestamp
+        GROUP BY g.id
     """
     )
-    fun getAll(): Flow<List<GameWithTopicAndScoredRoundsCount>>
+    fun getAllSince(startTimestamp: Long): Flow<List<GameWithTopicAndScoredRoundsCount>>
 }

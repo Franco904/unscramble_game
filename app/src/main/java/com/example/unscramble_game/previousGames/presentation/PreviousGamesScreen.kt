@@ -36,14 +36,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
 import com.example.unscramble_game.previousGames.presentation.models.PreviousGameUiState
 
 @Composable
 fun PreviousGamesScreen(
     modifier: Modifier = Modifier,
+    viewModel: PreviousGamesViewModel = hiltViewModel(),
     onUpNavigation: () -> Boolean = { true },
 ) {
+    val previousGames by viewModel.previousGames.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             PreviousGamesTopBar { onUpNavigation() }
@@ -52,7 +57,6 @@ fun PreviousGamesScreen(
         modifier = modifier
     ) { innerPadding ->
         val topPadding = 12.dp + innerPadding.calculateTopPadding()
-        val previousGamesGrouped = PreviousGamesDataSource.getPreviousGames()
 
         LazyColumn(
             contentPadding = PaddingValues(
@@ -64,12 +68,12 @@ fun PreviousGamesScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            previousGamesGrouped.forEach { (date, games) ->
+            previousGames.forEach { (date, games) ->
                 item {
                     Text(text = date, style = MaterialTheme.typography.bodyLarge)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-                items(games, key = { game -> game.topicText ?: "" }) { game ->
+                items(games, key = { game -> game.gameId ?: "" }) { game ->
                     GameItem(game)
                     Spacer(modifier = Modifier.height(14.dp))
                 }

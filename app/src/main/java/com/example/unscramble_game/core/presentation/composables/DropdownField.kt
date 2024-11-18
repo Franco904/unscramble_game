@@ -1,6 +1,5 @@
 package com.example.unscramble_game.core.presentation.composables
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -10,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -36,52 +36,49 @@ fun DropdownField(
     var isExpanded by remember { mutableStateOf(false) }
     var selectedItem by rememberSaveable { mutableStateOf("") }
 
-    Box(
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = {
+            isExpanded = !isExpanded
+        },
         modifier = modifier
             .fillMaxWidth()
     ) {
-        ExposedDropdownMenuBox(
+        TextField(
+            readOnly = true,
+            value = selectedItem,
+            onValueChange = {},
+            placeholder = { Text(placeholderText) },
+            trailingIcon = {
+                val icon =
+                    if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+        )
+        ExposedDropdownMenu(
             expanded = isExpanded,
-            onExpandedChange = {
-                isExpanded = !isExpanded
-            }
+            onDismissRequest = { isExpanded = false },
         ) {
-            TextField(
-                readOnly = true,
-                value = selectedItem,
-                onValueChange = {},
-                placeholder = { Text(placeholderText) },
-                trailingIcon = {
-                    val icon =
-                        if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
-                    Icon(
-                        icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                modifier = Modifier
-                    .menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = { isExpanded = false },
-            ) {
-                items.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(item) },
-                        onClick = {
-                            onItemSelected(item)
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    onClick = {
+                        onItemSelected(item)
 
-                            selectedItem = item
-                            isExpanded = false
-                        }
-                    )
-                }
+                        selectedItem = item
+                        isExpanded = false
+                    }
+                )
             }
         }
     }

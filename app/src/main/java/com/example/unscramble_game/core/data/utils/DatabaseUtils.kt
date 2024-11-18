@@ -7,7 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 private const val DATABASE_VERSION_ASSET_PATH = "database/version_"
 private const val SQL_FILE_TYPE = ".sql"
 
-//fun Context.getMigrationFromAssetFolder(
+//fun Context.getMigration(
 //    startVersion: Int = 0,
 //    endVersion: Int,
 //) = object : Migration(startVersion, endVersion) {
