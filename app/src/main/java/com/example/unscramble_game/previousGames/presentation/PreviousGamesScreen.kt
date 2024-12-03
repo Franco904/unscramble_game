@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
+import com.example.unscramble_game.core.presentation.theme.AppTheme
 import com.example.unscramble_game.previousGames.presentation.models.PreviousGameUiState
 
 @Composable
@@ -184,7 +184,7 @@ fun GameItem(
 @Preview
 @Composable
 fun PreviousGamesScreenPreview() {
-    UnscrambleGameTheme {
+    AppTheme {
         PreviousGamesScreen()
     }
 }

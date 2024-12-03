@@ -21,7 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
+import com.example.unscramble_game.core.presentation.theme.AppTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -87,7 +87,7 @@ fun DropdownField(
 @Preview
 @Composable
 fun DropdownFieldPreview() {
-    UnscrambleGameTheme {
+    AppTheme {
         DropdownField(
             placeholderText = "Placeholder",
             items = persistentListOf(),

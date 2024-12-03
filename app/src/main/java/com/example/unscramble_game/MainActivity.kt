@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.unscramble_game.RouteHandler.routes
-import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
+import com.example.unscramble_game.core.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            UnscrambleGameTheme {
+            AppTheme {
                 val navController = rememberNavController()
 
                 NavHost(

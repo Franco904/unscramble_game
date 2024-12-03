@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.unscramble_game.R
-import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
+import com.example.unscramble_game.core.presentation.theme.AppTheme
 
 @Composable
 fun GameFinishedScoreDialog(
@@ -104,7 +104,7 @@ fun GameFinishedScoreDialog(
 @Preview
 @Composable
 fun GameFinishedScoreDialogPreview() {
-    UnscrambleGameTheme {
+    AppTheme {
         GameFinishedScoreDialog(totalScore = 100)
     }
 }

@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.presentation.composables.DropdownField
-import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
+import com.example.unscramble_game.core.presentation.theme.AppTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -89,7 +89,7 @@ fun GameTopicSelectionDialog(
 @Preview
 @Composable
 fun GameTopicSelectionDialogPreview() {
-    UnscrambleGameTheme {
+    AppTheme {
         GameTopicSelectionDialog(topics = persistentListOf())
     }
 }

@@ -5,7 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 @Composable
-fun UnscrambleGameTheme(
+fun AppTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
@@ -13,8 +13,8 @@ fun UnscrambleGameTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        shapes = UnscrambleGameShapes,
-        typography = UnscrambleGameTypography,
+        shapes = AppShapes,
+        typography = AppTypography,
         content = content
     )
 }

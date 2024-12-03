@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.unscramble_game.R
-import com.example.unscramble_game.core.presentation.theme.UnscrambleGameTheme
+import com.example.unscramble_game.core.presentation.theme.AppTheme
 import com.example.unscramble_game.core.presentation.theme.spanTypography
 import com.example.unscramble_game.core.presentation.utils.showTextShareSheet
 import com.example.unscramble_game.core.presentation.utils.style
@@ -448,7 +448,7 @@ private fun GameSecondaryButton(
 @Preview
 @Composable
 fun GamePanelScreenPreview() {
-    UnscrambleGameTheme {
+    AppTheme {
         GamePanelScreen()
     }
 }
