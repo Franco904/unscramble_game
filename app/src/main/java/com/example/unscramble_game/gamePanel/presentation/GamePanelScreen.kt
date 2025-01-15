@@ -57,7 +57,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.unscramble_game.R
 import com.example.unscramble_game.core.presentation.theme.AppTheme
@@ -70,11 +69,12 @@ import com.example.unscramble_game.gamePanel.presentation.composables.GameTopicS
 import com.example.unscramble_game.gamePanel.presentation.models.GameStatus
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GamePanelScreen(
     modifier: Modifier = Modifier,
-    viewModel: GamePanelViewModel = hiltViewModel(),
+    viewModel: GamePanelViewModel = koinViewModel(),
     onNavigateToGameHistory: () -> Unit = {},
 ) {
     val gameControlUiState by viewModel.gameControlUiState.collectAsStateWithLifecycle()

@@ -7,22 +7,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.unscramble_game.RouteHandler.routes
 import com.example.unscramble_game.core.presentation.theme.AppTheme
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.compose.KoinContext
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AppTheme {
-                val navController = rememberNavController()
+            KoinContext {
+                AppTheme {
+                    val navController = rememberNavController()
 
-                NavHost(
-                    navController = navController,
-                    startDestination = Routes.GamePanel,
-                    builder = { routes(navController) },
-                )
+                    NavHost(
+                        navController = navController,
+                        startDestination = Routes.GamePanel,
+                        builder = { routes(navController) },
+                    )
+                }
             }
         }
     }

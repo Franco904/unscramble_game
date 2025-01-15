@@ -55,5 +55,14 @@ abstract class UnscrambleGameDatabase : RoomDatabase() {
                 })
                 .build()
         }
+
+        fun buildInMemoryDatabase(appContext: Context): UnscrambleGameDatabase {
+            return Room.inMemoryDatabaseBuilder(
+                context = appContext,
+                klass = UnscrambleGameDatabase::class.java,
+            )
+                .allowMainThreadQueries()
+                .build()
+        }
     }
 }

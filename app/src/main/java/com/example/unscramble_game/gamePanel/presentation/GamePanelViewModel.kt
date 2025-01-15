@@ -15,16 +15,13 @@ import com.example.unscramble_game.gamePanel.presentation.models.GameControlUiSt
 import com.example.unscramble_game.gamePanel.presentation.models.GameFormUiState
 import com.example.unscramble_game.gamePanel.presentation.models.GameStatus
 import com.example.unscramble_game.gamePanel.presentation.models.TopicUiState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
-@HiltViewModel
-class GamePanelViewModel @Inject constructor(
+class GamePanelViewModel(
     private val repository: GamePanelRepository,
 ) : ViewModel() {
     /*

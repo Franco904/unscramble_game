@@ -1,23 +1,17 @@
 package com.example.unscramble_game.core.di
 
-import android.app.Application
 import com.example.unscramble_game.core.data.local.database.UnscrambleGameDatabase
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.example.unscramble_game.core.data.local.database.daos.GameDao
+import com.example.unscramble_game.core.data.local.database.daos.RoundDao
+import com.example.unscramble_game.core.data.local.database.daos.TopicDao
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-class DatabaseModule {
-    @Provides
-    @Singleton
-    fun provideDatabase(
-        application: Application,
-    ): UnscrambleGameDatabase {
-        return UnscrambleGameDatabase.buildDatabase(
-            appContext = application,
-        )
+val databaseModule = module {
+    single {
+        UnscrambleGameDatabase.buildDatabase(appContext = get())
     }
+
+    single<GameDao> { get<UnscrambleGameDatabase>().gameDao() }
+    single<RoundDao> { get<UnscrambleGameDatabase>().roundDao() }
+    single<TopicDao> { get<UnscrambleGameDatabase>().topicDao() }
 }

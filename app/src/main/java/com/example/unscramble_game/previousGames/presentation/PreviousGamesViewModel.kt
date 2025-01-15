@@ -6,7 +6,6 @@ import com.example.unscramble_game.core.data.local.database.entities.intermediat
 import com.example.unscramble_game.previousGames.data.PreviousGamesRepository
 import com.example.unscramble_game.previousGames.presentation.models.PreviousGameUiState
 import com.example.unscramble_game.previousGames.presentation.models.PreviousGamesTimeFilter
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
@@ -17,10 +16,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
-@HiltViewModel
-class PreviousGamesViewModel @Inject constructor(
+class PreviousGamesViewModel(
     private val repository: PreviousGamesRepository,
 ) : ViewModel() {
     private val _previousGames =

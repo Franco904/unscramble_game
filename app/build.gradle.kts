@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinParcelize)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.room)
 }
 
@@ -20,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.unscramble_game.InstrumentationTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -99,10 +98,10 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
-    // Hilt DI
-    implementation(libs.dagger.hilt.android)
-    ksp(libs.dagger.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
+    // Koin (DI)
+    implementation(project.dependencies.platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
 
     // Kotlin
     implementation(libs.kotlin.collections.immutable)
@@ -118,13 +117,16 @@ dependencies {
     testRuntimeOnly(libs.junit.engine)
     testImplementation(libs.kluent)
     testImplementation(libs.mockk)
+    testImplementation(libs.koin.test)
 
     // Instrumented Tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.kluent)
     androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.koin.test)
 
     // Other
     debugImplementation(libs.androidx.ui.tooling)
